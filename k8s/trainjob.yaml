@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: train
+spec:
+  template:
+    spec:
+      containers:
+      - name: train
+        image: pharmsci/train:v0.1
+        command: ["python3", "train.py"]
+        env:
+          - name: MLFLOW_S3_ENDPOINT_URL
+            value: http://minio-api-svc:9000/
+          - name: AWS_ACCESS_KEY_ID
+            value: "minioadmin"
+          - name: AWS_SECRET_ACCESS_KEY
+            value: "minioadmin"
+      restartPolicy: Never
+  backoffLimit: 4
