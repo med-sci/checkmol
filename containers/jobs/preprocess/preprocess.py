@@ -1,7 +1,7 @@
 import os
 from loguru import logger
 from minio import Minio
-from base.utils import (
+from mlops_base.utils import (
     drop_duplicates,
     get_dataframe,
     drop_nan,

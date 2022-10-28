@@ -5,5 +5,6 @@ RUN \
 RUN \
   conda install -c conda-forge rdkit
 RUN git clone https://github.com/med-sci/k8s_mlops.git
+RUN pip install /k8s_mlops/mlops_base
 WORKDIR /k8s_mlops/containers/jobs/preprocess/
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
