@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: preprocess
+spec:
+  template:
+    spec:
+      containers:
+      - name: preprocess
+        image: pharmsci/preprocess:v0.1
+        envFrom:
+        - configMapRef:
+            name: preprocess
+        command: ["python3", "preprocess.py"]
+        volumeMounts:
+        - name: config
+          mountPath: "/etc/config"
+          readOnly: true
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
+      volumes:
+      - name: config
+        configMap:
+          name: preprocess
+      restartPolicy: Never
+  backoffLimit: 1

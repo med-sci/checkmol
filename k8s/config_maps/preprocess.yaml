@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: preprocess
+data:
+  S3_ENDPOINT_URL: minio-api-svc:9000
+  AWS_ACCESS_KEY_ID: "minioadmin"
+  AWS_SECRET_ACCESS_KEY: "minioadmin"
+  BUCKET_NAME: "data"
+  DATA_PATH: "/datasets/data.csv"
+  TRIM_DATA: "True"
+  TARGET_PATH: "/targets/target.npy"
+  TARGET_NAME: "standard_value"
+  FEATURES_PATH: "/features/features.npy"
+  SMILES_COLUMN_NAME: "canonical_smiles"
+  LOG10_TARGET: "False"
