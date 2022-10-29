@@ -7,8 +7,7 @@ from mlops_base.utils import (
     drop_nan,
     calculate_features,
     get_target,
-    write_features,
-    write_target,
+    write_array,
     log_10_target,
     load_from_s3,
     upload_to_s3
@@ -38,7 +37,7 @@ client = Minio(
     secure=False
 )
 
-logger.info(f"Loading data {DATA_PATH} from {BUCKET_NAME}")
+logger.info(f"Loading data {DATA_PATH} from {BUCKET_NAME} bucket")
 csv_path = load_from_s3(
     client=client,
     bucket_name=BUCKET_NAME,
@@ -48,30 +47,31 @@ csv_path = load_from_s3(
 logger.info(f"Loading data from {csv_path}")
 dataframe = get_dataframe(csv_path)
 
-
-if TRIM_DATA:
-    logger.info("Removing duplicates")
+if TRIM_DATA == 'True':
+    logger.info(f"Removing duplicates. Initial shape: {dataframe.shape}")
     dataframe = drop_duplicates(dataframe)
+    logger.info(f"Final shape: {dataframe.shape}")
 
-    logger.info("Removing NaN")
+    logger.info(f"Removing NaN initial shape: {dataframe.shape}")
     dataframe = drop_nan(dataframe)
+    logger.info(f"Final shape: {dataframe.shape}")
 
 
 logger.info(f"Loading {TARGET_NAME}")
 target = get_target(dataframe=dataframe, target=TARGET_NAME)
 
 
-if LOG10_TARGET:
+if LOG10_TARGET == 'True':
     logger.info("Converting target values to log10")
     target = log_10_target(target)
 
 
 logger.info(f"Writing target {TARGET_NAME} to {TMP_TARGET_PATH}")
-write_target(target_array=target, path=TMP_TARGET_PATH)
+write_array(array=target, path=TMP_TARGET_PATH)
 
 logger.info(
     f"Uploading {TARGET_NAME} from {TMP_TARGET_PATH} to"
-     " {TARGET_PATH} in {BUCKET_NAME}")
+    f" {TARGET_PATH} in {BUCKET_NAME}")
 upload_to_s3(
     client=client,
     bucket_name=BUCKET_NAME,
@@ -79,15 +79,15 @@ upload_to_s3(
     file_path=TMP_TARGET_PATH
 )
 
-logger.info("Calculating descriptors")
+logger.info("Calculating features")
 features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)
 
-logger.info(f"Writing features to {FEATURES_PATH}")
-write_features(features=features, path=FEATURES_PATH)
+logger.info(f"Writing features to {TMP_FEATURES_PATH}")
+write_array(array=features, path=TMP_FEATURES_PATH)
 
 logger.info(
     f"Uploading features from {TMP_FEATURES_PATH} to"
-     " {FEATURES_PATH} in {BUCKET_NAME}")
+    f" {FEATURES_PATH} in {BUCKET_NAME} bucket")
 upload_to_s3(
     client=client,
     bucket_name=BUCKET_NAME,

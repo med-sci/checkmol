@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from minio import Minio
 import os
+import pickle
 
 from rdkit import Chem
 from rdkit.Chem import Descriptors
@@ -40,20 +41,25 @@ def get_dataframe(path: str):
 
 
 def drop_duplicates(dataframe: pd.DataFrame):
-    return dataframe.drop_duplicates(inplace=True)
+    return dataframe.drop_duplicates()
 
 
 def drop_nan(dataframe: pd.DataFrame):
-    return dataframe.dropna(inplace=True)
+    return dataframe.dropna()
 
 
 def get_target(dataframe: pd.DataFrame, target: str):
     return dataframe[target].to_numpy()
 
 
-def write_target(target_array: np.ndarray, path: str):
+def write_array(array: np.ndarray, path: str):
     with open(path, 'wb') as file:
-        np.save(file, target_array)
+        pickle.dump(obj=array, file=file)
+
+
+def read_array(path: str):
+    with open(path, 'rb') as file:
+        return pickle.load(file=file)
 
 
 def calculate_features(dataframe: pd.DataFrame, smiles_col: str):
@@ -62,11 +68,6 @@ def calculate_features(dataframe: pd.DataFrame, smiles_col: str):
     return np.array([[descriptor_func(molecule) for _, descriptor_func
                       in Descriptors.descList]
                       for molecule in tqdm(molecules)])
-
-
-def write_features(features: np.ndarray, path: str):
-    with open(path, 'wb') as file:
-        np.save(file, features)
 
 
 def log_10_target(target: np.ndarray):
