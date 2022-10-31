@@ -53,6 +53,7 @@ def get_target(dataframe: pd.DataFrame, target: str):
 
 
 def write_array(array: np.ndarray, path: str):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'wb') as file:
         pickle.dump(obj=array, file=file)
 

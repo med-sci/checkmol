@@ -29,3 +29,22 @@ spec:
           name: preprocess
       restartPolicy: Never
   backoffLimit: 1
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: preprocess
+spec:
+  params:
+    - name: dataPath
+      type: string
+  steps:
+    - name: preprocess
+      image: pharmsci/preprocess:v0.1
+      env:
+      - name: DATA_PATH
+        value: "$(params.dataPath)"
+      envFrom:
+        - configMapRef:
+            name: preprocess
+      args: [ "python3", "preprocess.py"]

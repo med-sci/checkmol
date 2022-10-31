@@ -7,7 +7,6 @@ data:
   AWS_ACCESS_KEY_ID: "minioadmin"
   AWS_SECRET_ACCESS_KEY: "minioadmin"
   BUCKET_NAME: "data"
-  DATA_PATH: "datasets/data.csv"
   TRIM_DATA: "True"
   TARGET_PATH: "targets/target.pkl"
   TARGET_NAME: "standard_value"

@@ -63,6 +63,8 @@ def trainable(params):
 
     test_preds = np.column_stack([model.predict(features_test) for model in models])
     mean_test_preds = np.mean(test_preds, axis=1)
+    r2_score_test = r2_score(target_test, mean_test_preds)
+    return {'r2_score': r2_score_test}
 
 
 
