@@ -1,35 +1,3 @@
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: preprocess
-spec:
-  template:
-    spec:
-      containers:
-      - name: preprocess
-        image: pharmsci/preprocess:v0.1
-        envFrom:
-        - configMapRef:
-            name: preprocess
-        command: ["python3", "preprocess.py"]
-        volumeMounts:
-        - name: config
-          mountPath: "/etc/config"
-          readOnly: true
-        resources:
-          requests:
-            memory: "1Gi"
-            cpu: "1"
-          limits:
-            memory: "2Gi"
-            cpu: "2"
-      volumes:
-      - name: config
-        configMap:
-          name: preprocess
-      restartPolicy: Never
-  backoffLimit: 1
----
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
@@ -38,13 +6,15 @@ spec:
   params:
     - name: dataPath
       type: string
+      default: "datasets/data.csv"
   steps:
     - name: preprocess
       image: pharmsci/preprocess:v0.1
+      imagePullPolicy: IfNotPresent
       env:
       - name: DATA_PATH
         value: "$(params.dataPath)"
       envFrom:
         - configMapRef:
             name: preprocess
-      args: [ "python3", "preprocess.py"]
+      command: [ "python3", "preprocess.py"]
