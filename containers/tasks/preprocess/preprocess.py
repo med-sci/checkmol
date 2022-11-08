@@ -1,16 +1,13 @@
 import os
 from loguru import logger
-from minio import Minio
-from mlops_base.utils import (
+from mlbase.utils import write_array, ClientS3
+from utils import (
     drop_duplicates,
     get_dataframe,
     drop_nan,
     calculate_features,
     get_target,
-    write_array,
-    log_10_target,
-    load_from_s3,
-    upload_to_s3
+    log_10_target
 )
 
 ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY_ID")
@@ -26,26 +23,29 @@ FEATURES_PATH = os.environ.get("FEATURES_PATH")
 SMILES_COLUMN_NAME = os.environ.get("SMILES_COLUMN_NAME")
 LOG10_TARGET = os.environ.get("LOG10_TARGET")
 
+TMP_DATA_PATH = os.path.join('/tmp', DATA_PATH)
 TMP_TARGET_PATH = os.path.join('/tmp', TARGET_PATH)
 TMP_FEATURES_PATH = os.path.join('/tmp', FEATURES_PATH)
 
-
-client = Minio(
-    endpoint=S3_ENDPOINT_URL,
-    access_key=ACCESS_KEY,
-    secret_key=SECRET_KEY,
-    secure=False
+logger.info(f"Instantiating client..")
+s3_client = ClientS3(
+    endpoint_url=S3_ENDPOINT_URL,
+    aws_access_key_id=ACCESS_KEY,
+    aws_secret_access_key=SECRET_KEY
 )
 
-logger.info(f"Loading data {DATA_PATH} from {BUCKET_NAME} bucket")
-csv_path = load_from_s3(
-    client=client,
-    bucket_name=BUCKET_NAME,
-    file_path=DATA_PATH
+logger.info(
+    f"Loading data {DATA_PATH} from"
+    f"{BUCKET_NAME} bucket to {TMP_DATA_PATH}"
+)
+s3_client.load_from_s3(
+    bucket=BUCKET_NAME,
+    remote_path=DATA_PATH,
+    local_path=TMP_DATA_PATH
 )
 
-logger.info(f"Loading data from {csv_path}")
-dataframe = get_dataframe(csv_path)
+logger.info(f"Loading data from {TMP_DATA_PATH}")
+dataframe = get_dataframe(TMP_DATA_PATH)
 
 if TRIM_DATA == 'True':
     logger.info(f"Removing duplicates. Initial shape: {dataframe.shape}")
@@ -72,11 +72,10 @@ write_array(array=target, path=TMP_TARGET_PATH)
 logger.info(
     f"Uploading {TARGET_NAME} from {TMP_TARGET_PATH} to"
     f" {TARGET_PATH} in {BUCKET_NAME}")
-upload_to_s3(
-    client=client,
-    bucket_name=BUCKET_NAME,
-    bucket_path=TARGET_PATH,
-    file_path=TMP_TARGET_PATH
+s3_client.upload_to_s3(
+    bucket=BUCKET_NAME,
+    remote_path=TARGET_PATH,
+    local_path=TMP_TARGET_PATH
 )
 
 logger.info("Calculating features")
@@ -88,10 +87,9 @@ write_array(array=features, path=TMP_FEATURES_PATH)
 logger.info(
     f"Uploading features from {TMP_FEATURES_PATH} to"
     f" {FEATURES_PATH} in {BUCKET_NAME} bucket")
-upload_to_s3(
-    client=client,
-    bucket_name=BUCKET_NAME,
-    bucket_path=FEATURES_PATH,
-    file_path=TMP_FEATURES_PATH
+s3_client.upload_to_s3(
+    bucket=BUCKET_NAME,
+    remote_path=FEATURES_PATH,
+    local_path=TMP_FEATURES_PATH
 )
 

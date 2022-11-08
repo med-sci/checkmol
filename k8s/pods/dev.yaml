@@ -12,13 +12,13 @@ spec:
       envFrom:
       - configMapRef:
           name: preprocess
-      resources:
-        requests:
-          memory: "1Gi"
-          cpu: "1"
-        limits:
-          memory: "2Gi"
-          cpu: "2"
+      # resources:
+      #   requests:
+      #     memory: "1Gi"
+      #     cpu: "1"
+      #   limits:
+      #     memory: "2Gi"
+      #     cpu: "2"
       volumeMounts:
         - mountPath: /projects
           name: dev-volume

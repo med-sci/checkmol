@@ -8,7 +8,7 @@ class Model(ABC):
     def __init__(
         self,
         mode: Literal['regression'],
-        params: Dict[str: Union[str, int, float]]
+        params: Dict[str, Union[str, int, float]]
     ):
         self.mode = mode
         self.params = params
@@ -36,11 +36,14 @@ class RandomForest(Model):
                 self._model = RandomForestRegressor(**self.params)
             else:
                 raise ValueError(f"Unsupported mode: {self.mode}")
+        return self._model
+
+
 
     def fit(self, X: np.array, y: np.array):
-        self._model.fit(X, y)
+        self.model.fit(X, y)
 
     def predict(self, X) -> np.array:
-        return self._model.predict(X)
+        return self.model.predict(X)
 
 
