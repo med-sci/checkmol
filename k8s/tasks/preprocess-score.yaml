@@ -1,0 +1,27 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: preprocess-score
+spec:
+  params:
+    - name: smiles
+      type: array
+    - name: featuresPath
+      type: string
+  steps:
+    - name: preprocess-score
+      image: pharmsci/preprocess:v0.2
+      imagePullPolicy: IfNotPresent
+      env:
+      - name: TASK
+        value: "Score"
+      - name: SMILES
+        value: "$(params.smiles[*])"
+      - name: BUCKET_NAME
+        value: "score"
+      - name: FEATURES_PATH
+        value: "$(params.featuresPath)"
+      envFrom:
+        - configMapRef:
+            name: preprocess
+      command: [ "python3", "entrypoint.py"]
