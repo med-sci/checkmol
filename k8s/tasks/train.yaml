@@ -9,6 +9,8 @@ spec:
       type: string
     - name: featuresPath
       type: string
+    - name: bucketName
+      type: string
     - name: targetName
       type: string
     - name: experimentCondition

@@ -1,6 +1,0 @@
-artifact_location: file:///projects/k8s_mlops/containers/tasks/train/mlruns/1
-creation_time: 1668062799363
-experiment_id: '1'
-last_update_time: 1668062799363
-lifecycle_stage: active
-name: standard_value_Test_a3cea83086744b19ae3d4d19fdcaf9db
