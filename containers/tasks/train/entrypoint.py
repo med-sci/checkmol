@@ -1,9 +1,11 @@
 import os
 import numpy as np
 import uuid
+import random
 
 from mlflow import MlflowClient
 from mlflow.entities import RunStatus
+from mlflow.tracking.context.registry import resolve_tags
 
 from os.path import dirname, abspath
 from functools import partial
@@ -24,30 +26,49 @@ ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY_ID")
 SECRET_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 S3_ENDPOINT_URL = os.environ.get("S3_ENDPOINT_URL")
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
-MLFLOW_TRACKING_URI = 'http://mlflow-svc:5000/'  # os.environ['MLFLOW_TRACKING_URI']
+MLFLOW_TRACKING_URI = os.environ['MLFLOW_TRACKING_URI']
 
 FEATURES_PATH = os.environ.get("FEATURES_PATH")
 TARGET_PATH = os.environ.get("TARGET_PATH")
+TARGET_NAME = os.environ.get("TARGET_NAME")
+EXPERIMENT_CONDITION = os.environ.get("EXPERIMENT_CONDITION")
+
 TMP_TARGET_PATH = os.path.join('/tmp', TARGET_PATH)
 TMP_FEATURES_PATH = os.path.join('/tmp', FEATURES_PATH)
+EXPERIMENT_NAME = f"{TARGET_NAME}_{EXPERIMENT_CONDITION}_{uuid.uuid4().hex}"
 
-EXPERIMENT_NAME = 'NR3C4_' + uuid.uuid4().hex
-NUM_RUNS = 1
-N_SPLITS = 5
-RANDOM_STATE = 42
-MODE = 'regression'
-METRIC = 'r2_score'
-METRIC_MODE = 'max'
-TEST_SIZE = 0.2
+NUM_RUNS = int(os.environ.get("NUM_RUNS"))
+N_SPLITS = int(os.environ.get("NUM_SPLITS"))
+RANDOM_STATE = int(os.environ.get("RANDOM_STATE"))
+MODE = os.environ.get("MODE")
+METRIC = os.environ.get("METRIC")
+METRIC_MODE = os.environ.get("METRIC_MODE")
+TEST_SIZE = float(os.environ.get("TEST_SIZE"))
 SEARCH_SPACE_PATH = os.path.join(dirname(abspath(__file__)), "search_spaces/random_forest.json")
 TMP_MODEL_PATH = "/tmp/model/"
 
 METRIC_TO_OPTIMIZE = f'{METRIC}_cv_mean'
 METRIC_FUNC = get_metric(METRIC)
 
+TAGS = {
+    "Num runs": NUM_RUNS,
+    "Num splits": N_SPLITS,
+    "Mode": MODE,
+    "Metric mode": METRIC_MODE,
+    "Test size": TEST_SIZE,
+    "Target name": TARGET_NAME
+}
+TAGS.update(resolve_tags())
+
+np.random.seed(RANDOM_STATE)
+random.seed(RANDOM_STATE)
+
 
 def trainable(params: Dict[str, Any], mlflow_client: MlflowClient, exp_id: str):
     run = mlflow_client.create_run(exp_id)
+
+    for tag, value in TAGS.items():
+        mlflow_client.set_tag(run.info.run_id, tag, value)
 
     for param, value in params.items():
         mlflow_client.log_param(run.info.run_id, param, value)
@@ -96,6 +117,8 @@ def trainable(params: Dict[str, Any], mlflow_client: MlflowClient, exp_id: str):
             ensemble.save_model(TMP_MODEL_PATH),
             model_path
         )
+        mlflow_client.set_tag(run.info.run_id, "Model path", ensemble.model_path)
+
         mlflow_client.set_terminated(
             run.info.run_id, RunStatus.to_string(RunStatus.FINISHED)
         )

@@ -3,6 +3,7 @@ kind: ConfigMap
 metadata:
   name: preprocess
 data:
-  S3_ENDPOINT_URL: http://minio-api-svc:9000
+  S3_ENDPOINT_URL: "http://minio-api-svc:9000"
   AWS_ACCESS_KEY_ID: "minioadmin"
   AWS_SECRET_ACCESS_KEY: "minioadmin"
+  MLFLOW_TRACKING_URI: "http://mlflow-svc:5000/"

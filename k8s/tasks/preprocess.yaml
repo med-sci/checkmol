@@ -37,7 +37,7 @@ spec:
     - name: trimData
       type: string
       default: "True"
-    - targetPath:
+    - name: targetPath
       type: string
     - name: featuresPath
       type: string

@@ -1,8 +1,8 @@
 FROM python:3.10-slim-buster
-WORKDIR /home/train
-COPY ./requirements.txt /home/train/requirements.txt
-COPY ./train.py /home/train/train.py
 RUN \
   apt-get update && \
-  apt-get -y install vim curl git
+  apt-get -y install git
+RUN git clone https://github.com/med-sci/k8s_mlops.git
+RUN pip install /k8s_mlops/mlbase
+WORKDIR /k8s_mlops/containers/tasks/train/
 RUN pip install --no-cache-dir --upgrade -r requirements.txt

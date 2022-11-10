@@ -84,5 +84,7 @@ class EnsembleModel:
         with open(path, 'wb') as file:
             pickle.dump(self, file)
 
+        self.model_path = path
+
         return path
 

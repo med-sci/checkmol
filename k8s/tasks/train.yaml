@@ -1,20 +1,65 @@
-apiVersion: batch/v1
-kind: Job
+apiVersion: tekton.dev/v1beta1
+kind: Task
 metadata:
   name: train
 spec:
-  template:
-    spec:
-      containers:
-      - name: train
-        image: pharmsci/train:v0.1
-        command: ["python3", "train.py"]
-        env:
-          - name: MLFLOW_S3_ENDPOINT_URL
-            value: http://minio-api-svc:9000/
-          - name: AWS_ACCESS_KEY_ID
-            value: "minioadmin"
-          - name: AWS_SECRET_ACCESS_KEY
-            value: "minioadmin"
-      restartPolicy: Never
-  backoffLimit: 4
+  params:
+    - name: bucketName
+    - name: targetPath
+      type: string
+    - name: featuresPath
+      type: string
+    - name: bucketName
+      type: string
+    - name: targetName
+      type: string
+    - name: experimentCondition
+      type: string
+      default: ""
+    - name: numRuns
+      default: "10"
+    - name: numSplits
+      default: "5"
+    - name: randomState
+      default: "42"
+    - name: mode
+      default: "regression"
+    - name: metric
+      default: "r2_score"
+    - name: metricMode
+      default: "max"
+    - name: testSize
+      default: "0.2"
+  steps:
+    - name: train
+      image: pharmsci/train:v0.1
+      imagePullPolicy: IfNotPresent
+      env:
+      - name: FEATURES_PATH
+        value: "$(params.featuresPath)"
+      - name: TARGET_PATH
+        value: "$(params.targetPath)"
+      - name: TARGET_NAME
+        value: "$(params.targetName)"
+      - name: EXPERIMENT_CONDITION
+        value: "$(params.experimentCondition)"
+      - name: BUCKET_NAME
+        value: "$(params.bucketName)"
+      - name: NUM_RUNS
+        value: "$(params.numRuns)"
+      - name: NUM_SPLITS
+        value: "$(params.numSplits)"
+      - name: RANDOM_STATE
+        value: "$(params.randomState)"
+      - name: MODE
+        value: "$(params.mode)"
+      - name: METRIC
+        value: "$(params.metric)"
+      - name: METRIC_MODE
+        value: "$(params.metricMode)"
+      - name: TEST_SIZE
+        value: "$(params.testSize)"
+      envFrom:
+        - configMapRef:
+            name: preprocess
+      command: [ "python3", "entrypoint.py"]
