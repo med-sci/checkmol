@@ -26,7 +26,7 @@ ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY_ID")
 SECRET_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 S3_ENDPOINT_URL = os.environ.get("S3_ENDPOINT_URL")
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
-MLFLOW_TRACKING_URI = os.environ['MLFLOW_TRACKING_URI']
+MLFLOW_TRACKING_URI = os.environ.get('MLFLOW_TRACKING_URI')
 
 FEATURES_PATH = os.environ.get("FEATURES_PATH")
 TARGET_PATH = os.environ.get("TARGET_PATH")
@@ -110,7 +110,7 @@ def trainable(params: Dict[str, Any], mlflow_client: MlflowClient, exp_id: str):
         for metric, value in metrics.items():
             mlflow_client.log_metric(run.info.run_id, metric, value)
 
-        model_path = f'/{exp_id}/{run.info.run_id}/artifacts/model'
+        model_path = f'/{exp_id}/{run.info.run_id}/artifacts/model/'
 
         mlflow_client.log_artifact(
             run.info.run_id,

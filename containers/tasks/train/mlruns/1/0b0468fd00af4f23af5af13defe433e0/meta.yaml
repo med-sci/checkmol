@@ -1,0 +1,15 @@
+artifact_uri: file:///projects/k8s_mlops/containers/tasks/train/mlruns/1/0b0468fd00af4f23af5af13defe433e0/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '1'
+lifecycle_stage: active
+run_id: 0b0468fd00af4f23af5af13defe433e0
+run_name: upset-shrimp-247
+run_uuid: 0b0468fd00af4f23af5af13defe433e0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1668062811288
+status: 1
+tags: []
+user_id: unknown

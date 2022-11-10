@@ -1,0 +1,15 @@
+artifact_uri: file:///projects/k8s_mlops/containers/tasks/train/mlruns/1/df25fa2081304dac82227fc076db8117/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '1'
+lifecycle_stage: active
+run_id: df25fa2081304dac82227fc076db8117
+run_name: mercurial-sloth-604
+run_uuid: df25fa2081304dac82227fc076db8117
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1668062811976
+status: 1
+tags: []
+user_id: unknown
