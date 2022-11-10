@@ -1,0 +1,15 @@
+artifact_uri: file:///projects/k8s_mlops/containers/tasks/train/mlruns/1/b7f4553ccaed4050bc1900853af37754/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '1'
+lifecycle_stage: active
+run_id: b7f4553ccaed4050bc1900853af37754
+run_name: fun-mule-877
+run_uuid: b7f4553ccaed4050bc1900853af37754
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1668062811440
+status: 1
+tags: []
+user_id: unknown
