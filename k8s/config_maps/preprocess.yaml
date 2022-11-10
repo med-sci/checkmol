@@ -6,8 +6,3 @@ data:
   S3_ENDPOINT_URL: http://minio-api-svc:9000
   AWS_ACCESS_KEY_ID: "minioadmin"
   AWS_SECRET_ACCESS_KEY: "minioadmin"
-  TRIM_DATA: "True"
-  TARGET_PATH: "targets/target.pkl"
-  TARGET_NAME: "standard_value"
-  SMILES_COLUMN_NAME: "canonical_smiles"
-  LOG10_TARGET: "False"

@@ -12,7 +12,6 @@ from preprocess.utils import (
     log_10_target
 )
 TASK: Literal["Train", "Score"] = os.environ.get("TASK")
-SMILES: List[str] = os.environ.get("SMILES").split()
 
 ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY_ID")
 SECRET_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
@@ -84,7 +83,8 @@ if TASK == "Train":
     )
 
 elif TASK == "Score":
-    dataframe = pd.DataFrame({SMILES_COLUMN_NAME: SMILES})
+    smiles: List[str] = os.environ.get("SMILES").split()
+    dataframe = pd.DataFrame({SMILES_COLUMN_NAME: smiles})
 
 logger.info("Calculating features")
 features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)

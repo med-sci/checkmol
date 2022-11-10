@@ -1,0 +1,33 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: preprocess-score
+spec:
+  params:
+  - name: smiles
+  - name: featuresPath
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: TaskRun
+    metadata:
+      generateName: preprocess-score-
+    spec:
+      taskRef:
+        name: preprocess-score
+      params:
+      - name: smiles
+        value: "$(params.smiles)"
+      - name: featuresPath
+        value: "$(params.featuresPath)"
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: preprocess-score
+spec:
+  params:
+  - name: smiles
+    value: "$(body.smiles)"
+  - name: featuresPath
+    value: "$(body.featuresPath)"
+---
