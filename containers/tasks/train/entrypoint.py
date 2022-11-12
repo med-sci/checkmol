@@ -18,7 +18,7 @@ from ray.tune.search.optuna import OptunaSearch
 
 from mlbase.utils import read_array, ClientS3
 
-from train.models import RandomForest, EnsembleModel
+from mlbase.models import RandomForest, EnsembleModel
 from train.utils import parse_space_from_file, get_metric
 
 

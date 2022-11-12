@@ -1,0 +1,27 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: score
+spec:
+  params:
+    - name: modelPath
+      type: string
+    - name: featuresPath
+      type: string
+  steps:
+    - name: score
+      image: pharmsci/score:v0.1
+      imagePullPolicy: IfNotPresent
+      env:
+      - name: MODEL_PATH
+        value: "$(params.modelPath)"
+      - name: MODEL_BUCKET_NAME
+        value: "mlflow"
+      - name: FEATURES_BUCKET_NAME
+        value: "score"
+      - name: FEATURES_PATH
+        value: "$(params.featuresPath)"
+      envFrom:
+        - configMapRef:
+            name: preprocess
+      command: ["python3", "entrypoint.py"]
