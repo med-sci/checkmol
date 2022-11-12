@@ -20,9 +20,6 @@ ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY_ID")
 SECRET_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 S3_ENDPOINT_URL = os.environ.get("S3_ENDPOINT_URL")
 
-FEATURES_PATH = os.environ.get("FEATURES_PATH")
-TMP_FEATURES_PATH = os.path.join('/tmp', FEATURES_PATH)
-
 logger.info(f"Instantiating client..")
 s3_client = ClientS3(
     endpoint_url=S3_ENDPOINT_URL,
@@ -98,6 +95,8 @@ if TASK == "Train":
 
 elif TASK == "Score":
     SMILES_COLUMN_NAME = "smiles"
+    FEATURES_PATH = os.environ.get("FEATURES_PATH")
+    TMP_FEATURES_PATH = os.path.join('/tmp', FEATURES_PATH)
     smiles: List[str] = os.environ.get("SMILES").replace(" ", "").split(",")
     dataframe = pd.DataFrame({SMILES_COLUMN_NAME: smiles})
 

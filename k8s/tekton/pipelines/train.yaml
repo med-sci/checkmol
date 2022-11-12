@@ -35,10 +35,10 @@ spec:
   - name: testSize
     default: "0.2"
   tasks:
-  - name: preprocess-train
+  - name: preprocess
     params:
     - name: task
-      $(params.task)
+      value: $(params.task)
     - name: dataBucketName
       value: $(params.dataBucketName)
     - name: resultBucketName
@@ -89,3 +89,5 @@ spec:
     taskRef:
       kind: Task
       name: train
+    runAfter:
+      - preprocess

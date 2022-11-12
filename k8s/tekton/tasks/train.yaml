@@ -37,7 +37,7 @@ spec:
       - name: EXPERIMENT_NAME
         value: "$(params.experimentName)"
       - name: RESULT_BUCKET_NAME
-        value: "$(params.bucketName)"
+        value: "$(params.resultBucketName)"
       - name: NUM_RUNS
         value: "$(params.numRuns)"
       - name: NUM_SPLITS
