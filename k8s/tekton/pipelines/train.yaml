@@ -1,0 +1,91 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: train
+spec:
+  description: >-
+    perform preprocessing and model training
+  params:
+  - name: task
+    default: "Train"
+  - name: dataBucketName
+    default: "data"
+  - name: resultBucketName
+    default: "train"
+  - name: proteinName
+  - name: dataPath
+  - name: trimData
+    default: "True"
+  - name: targetName
+  - name: smilesColName
+  - name: log10Target
+  - name: experimentCondition
+  - name: numRuns
+    default: "10"
+  - name: numSplits
+    default: "5"
+  - name: randomState
+    default: "42"
+  - name: mode
+    default: "regression"
+  - name: metric
+    default: "r2_score"
+  - name: metricMode
+    default: "max"
+  - name: testSize
+    default: "0.2"
+  tasks:
+  - name: preprocess-train
+    params:
+    - name: task
+      $(params.task)
+    - name: dataBucketName
+      value: $(params.dataBucketName)
+    - name: resultBucketName
+      value: $(params.resultBucketName)
+    - name: proteinName
+      value: $(params.proteinName)
+    - name: dataPath
+      value: $(params.dataPath)
+    - name: trimData
+      value: $(params.trimData)
+    - name: targetName
+      value: $(params.targetName)
+    - name: smilesColName
+      value: $(params.smilesColName)
+    - name: log10Target
+      value: $(params.log10Target)
+    - name: experimentCondition
+      value: $(params.experimentCondition)
+    taskRef:
+      kind: Task
+      name: preprocess-train
+  - name: train
+    params:
+    - name: resultBucketName
+      value: $(params.resultBucketName)
+    - name: targetPath
+      value: tasks.preprocess-train.results.TARGET_PATH
+    - name: featuresPath
+      value: tasks.preprocess-train.results.FEATURES_PATH
+    - name: proteinName
+      value: $(params.proteinName)
+    - name: experimentName
+      value: tasks.preprocess-train.results.EXPERIMENT_NAME
+    - name: numRuns
+      value: $(params.numRuns)
+    - name: numSplits
+      value: $(params.numSplits)
+    - name: randomState
+      value: $(params.randomState)
+    - name: mode
+      value: $(params.mode)
+    - name: metric
+      value: $(params.metric)
+    - name: metricMode
+      value: $(params.metricMode)
+    - name: testSize
+      value: $(params.testSize)
+    taskRef:
+      kind: Task
+      name: train

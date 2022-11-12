@@ -32,26 +32,24 @@ metadata:
   name: preprocess-train
 spec:
   params:
-    - name: dataPath
-      type: string
-    - name: trimData
-      type: string
-      default: "True"
-    - name: targetPath
-      type: string
-    - name: featuresPath
-      type: string
-    - name: bucketName
-      type: string
-    - name: targetName
-      type: string
-      default: "standard_value"
-    - name: smilesColumnName
-      type: string
-      default: "canonical_smiles"
-    - name: log10Target
-      type: string
-      default: "False"
+  - name: task
+    default: "Train"
+  - name: dataBucketName
+    default: "data"
+  - name: resultBucketName
+    default: "train"
+  - name: proteinName
+  - name: dataPath
+  - name: trimData
+    default: "True"
+  - name: targetName
+  - name: smilesColName
+  - name: log10Target
+  - name: experimentCondition
+  results:
+    - name: FEATURES_PATH
+    - name: TARGET_PATH
+    - name: EXPERIMENT_NAME
   steps:
     - name: preprocess-score
       image: pharmsci/preprocess:v0.2
@@ -59,20 +57,20 @@ spec:
       env:
       - name: TASK
         value: "Train"
-      - name: DATA_PATH
-        value: "$(params.dataPath)"
+      - name: DATA_BUCKET_NAME
+        value: "$(params.dataBucketName)"
+      - name: RESULT_BUCKET_NAME
+        value: "$(params.resultBucketName)"
+      - name: PROTEIN_NAME
+        value: "$(params.proteinName)"
       - name: TRIM_DATA
         value: "$(params.trimData)"
-      - name: TARGET_PATH
-        value: "$(params.targetPath)"
-      - name: BUCKET_NAME
-        value: "$(params.bucketName)"
-      - name: FEATURES_PATH
-        value: "$(params.featuresPath)"
+      - name: SMILES_COLUMN_NAME
+        value: "$(params.smilesColName)"
       - name: TARGET_NAME
         value: "$(params.targetName)"
-      - name: SMILES_COLUMN_NAME
-        value: "$(params.smilesColumnName)"
+      - name: EXPERIMENT_CONDITION
+        value: "$(params.experimentCondition)"
       - name: LOG10_TARGET
         value: "$(params.log10Target)"
       envFrom:

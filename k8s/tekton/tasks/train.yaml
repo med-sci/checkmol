@@ -4,16 +4,11 @@ metadata:
   name: train
 spec:
   params:
-    - name: bucketName
+    - name: resultBucketName
     - name: targetPath
-      type: string
     - name: featuresPath
-      type: string
-    - name: targetName
-      type: string
-    - name: experimentCondition
-      type: string
-      default: ""
+    - name: proteinName
+    - name: experimentName
     - name: numRuns
       default: "10"
     - name: numSplits
@@ -37,11 +32,11 @@ spec:
         value: "$(params.featuresPath)"
       - name: TARGET_PATH
         value: "$(params.targetPath)"
-      - name: TARGET_NAME
-        value: "$(params.targetName)"
-      - name: EXPERIMENT_CONDITION
-        value: "$(params.experimentCondition)"
-      - name: BUCKET_NAME
+      - name: PROTEIN_NAME
+        value: "$(params.proteinName)"
+      - name: EXPERIMENT_NAME
+        value: "$(params.experimentName)"
+      - name: RESULT_BUCKET_NAME
         value: "$(params.bucketName)"
       - name: NUM_RUNS
         value: "$(params.numRuns)"

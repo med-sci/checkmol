@@ -25,17 +25,16 @@ from train.utils import parse_space_from_file, get_metric
 ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY_ID")
 SECRET_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 S3_ENDPOINT_URL = os.environ.get("S3_ENDPOINT_URL")
-BUCKET_NAME = os.environ.get("BUCKET_NAME")
+RESULT_BUCKET_NAME = os.environ.get("RESULT_BUCKET_NAME")
 MLFLOW_TRACKING_URI = os.environ.get('MLFLOW_TRACKING_URI')
 
 FEATURES_PATH = os.environ.get("FEATURES_PATH")
 TARGET_PATH = os.environ.get("TARGET_PATH")
-TARGET_NAME = os.environ.get("TARGET_NAME")
-EXPERIMENT_CONDITION = os.environ.get("EXPERIMENT_CONDITION")
+PROTEIN_NAME = os.environ.get("PROTEIN_NAME")
+EXPERIMENT_NAME = os.environ.get("EXPERIMENT_NAME")
 
 TMP_TARGET_PATH = os.path.join('/tmp', TARGET_PATH)
 TMP_FEATURES_PATH = os.path.join('/tmp', FEATURES_PATH)
-EXPERIMENT_NAME = f"{TARGET_NAME}_{EXPERIMENT_CONDITION}_{uuid.uuid4().hex}"
 
 NUM_RUNS = int(os.environ.get("NUM_RUNS"))
 N_SPLITS = int(os.environ.get("NUM_SPLITS"))
@@ -56,7 +55,7 @@ TAGS = {
     "Mode": MODE,
     "Metric mode": METRIC_MODE,
     "Test size": TEST_SIZE,
-    "Target name": TARGET_NAME
+    "Target name": PROTEIN_NAME
 }
 TAGS.update(resolve_tags())
 
@@ -144,20 +143,20 @@ mlflow_client = MlflowClient(
 
 logger.info(
     f"Loading features {FEATURES_PATH} from"
-    f" {BUCKET_NAME} bucket to {TMP_FEATURES_PATH}"
+    f" {RESULT_BUCKET_NAME} bucket to {TMP_FEATURES_PATH}"
 )
 s3_client.load_from_s3(
-    bucket=BUCKET_NAME,
+    bucket=RESULT_BUCKET_NAME,
     remote_path=FEATURES_PATH,
     local_path=TMP_FEATURES_PATH
 )
 
 logger.info(
     f"Loading target {TARGET_PATH} from"
-    f" {BUCKET_NAME} bucket to {TMP_TARGET_PATH}"
+    f" {RESULT_BUCKET_NAME} bucket to {TMP_TARGET_PATH}"
 )
 s3_client.load_from_s3(
-    bucket=BUCKET_NAME,
+    bucket=RESULT_BUCKET_NAME,
     remote_path=TARGET_PATH,
     local_path=TMP_TARGET_PATH
 )
