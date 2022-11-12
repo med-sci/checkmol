@@ -5,7 +5,6 @@ from typing import List
 from typing import Dict, Literal, Union
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
-from mlflow import pyfunc
 
 
 class Model(ABC):
