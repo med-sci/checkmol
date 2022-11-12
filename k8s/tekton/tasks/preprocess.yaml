@@ -75,6 +75,12 @@ spec:
         value: "$(params.experimentCondition)"
       - name: LOG10_TARGET
         value: "$(params.log10Target)"
+      - name: FEATURES_PATH_RESULT_PATH
+        value: $(results.FEATURES_PATH.path)
+      - name: TARGET_PATH_RESULT_PATH
+        value: $(results.TARGET_PATH.path)
+      - name: EXPERIMENT_NAME_RESULT_PATH
+        value: $(results.EXPERIMENT_NAME.path)
       envFrom:
         - configMapRef:
             name: preprocess
