@@ -57,6 +57,8 @@ spec:
       env:
       - name: TASK
         value: "Train"
+      - name: DATA_PATH
+        value: "$(params.dataPath)"
       - name: DATA_BUCKET_NAME
         value: "$(params.dataBucketName)"
       - name: RESULT_BUCKET_NAME
@@ -76,4 +78,12 @@ spec:
       envFrom:
         - configMapRef:
             name: preprocess
-      command: [ "python3", "entrypoint.py"]
+      command: ["python", "entrypoint.py"]
+      args: [
+        "-f",
+        "results.FEATURES_PATH.path",
+        "-t",
+        "results.TARGET_PATH.path",
+        "-e",
+        "results.EXPERIMENT_NAME.path"
+        ]
