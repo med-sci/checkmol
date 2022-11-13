@@ -1,18 +1,26 @@
+import uuid
 from typing import Literal, List
 
 from fastapi import FastAPI
 from pydantic import BaseModel
 
+from registry import get_model_path
+
 
 class ScoreCase(BaseModel):
-    target: str
-    mode: Literal['regression'] = 'regression'
-    smiles: List[str]
-    model: str
+    smiles: str
+    protein: str
 
 
 app = FastAPI()
 
-@app.post("/items/{score_id}")
-async def score(score_id: int, score_case: ScoreCase):
-    return {"score_id": score_id, **score_case.dict()}
+score_id = uuid.uuid4().hex
+
+@app.post(f"/items/{score_id}")
+async def score( score_case: ScoreCase, score_id: str=score_id,):
+    model_path = get_model_path(score_case.protein)
+    return {
+        "score_id": score_id,
+        "model_path": model_path,
+         **score_case.dict()
+    }
