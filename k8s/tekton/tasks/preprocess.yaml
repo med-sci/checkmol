@@ -5,9 +5,11 @@ metadata:
 spec:
   params:
     - name: smiles
-      type: string
-    - name: featuresPath
-      type: string
+    - name: scoreId
+    - name: resultBucketId
+      default: "score"
+  results:
+    - name: FEATURES_PATH
   steps:
     - name: preprocess-score
       image: pharmsci/preprocess:v0.2
@@ -17,10 +19,12 @@ spec:
         value: "Score"
       - name: SMILES
         value: "$(params.smiles)"
-      - name: BUCKET_NAME
+      - name: RESULT_BUCKET_NAME
         value: "score"
-      - name: FEATURES_PATH
-        value: "$(params.featuresPath)"
+      - name: SCORE_ID
+        value: "$(params.scoreId)"
+      - name: FEATURES_PATH_RESULT_PATH
+        value: $(results.FEATURES_PATH.path)
       envFrom:
         - configMapRef:
             name: preprocess

@@ -24,9 +24,8 @@ ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY_ID")
 SECRET_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 S3_ENDPOINT_URL = os.environ.get("S3_ENDPOINT_URL")
 
+RESULT_BUCKET_NAME = os.environ.get("RESULT_BUCKET_NAME")
 FEATURES_PATH_RESULT_PATH = os.environ.get("FEATURES_PATH_RESULT_PATH")
-TARGET_PATH_RESULT_PATH = os.environ.get("TARGET_PATH_RESULT_PATH")
-EXPERIMENT_NAME_RESULT_PATH = os.environ.get("EXPERIMENT_NAME_RESULT_PATH")
 
 logger.info(f"Instantiating client..")
 s3_client = ClientS3(
@@ -35,8 +34,10 @@ s3_client = ClientS3(
     aws_secret_access_key=SECRET_KEY
 )
 if TASK == "Train":
+    TARGET_PATH_RESULT_PATH = os.environ.get("TARGET_PATH_RESULT_PATH")
+    EXPERIMENT_NAME_RESULT_PATH = os.environ.get("EXPERIMENT_NAME_RESULT_PATH")
+
     DATA_BUCKET_NAME = os.environ.get("DATA_BUCKET_NAME")
-    RESULT_BUCKET_NAME = os.environ.get("RESULT_BUCKET_NAME")
 
     PROTEIN_NAME = os.environ.get("PROTEIN_NAME")
 
@@ -100,36 +101,55 @@ if TASK == "Train":
         remote_path=TARGET_PATH,
         local_path=TMP_TARGET_PATH
     )
+    logger.info("Calculating features")
+    features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)
+
+    logger.info(f"Writing features to {TMP_FEATURES_PATH}")
+    write_array(array=features, path=TMP_FEATURES_PATH)
+
+    logger.info(
+        f"Uploading features from {TMP_FEATURES_PATH} to"
+        f" {FEATURES_PATH} in {RESULT_BUCKET_NAME} bucket")
+    s3_client.upload_to_s3(
+        bucket=RESULT_BUCKET_NAME,
+        remote_path=FEATURES_PATH,
+        local_path=TMP_FEATURES_PATH
+    )
+
+    # emitting results
+    logger.info(f"Writing {FEATURES_PATH} to {FEATURES_PATH_RESULT_PATH}")
+    write_task_result(FEATURES_PATH, FEATURES_PATH_RESULT_PATH)
+
+    logger.info(f"Writing {TARGET_PATH} to {TARGET_PATH_RESULT_PATH}")
+    write_task_result(TARGET_PATH, TARGET_PATH_RESULT_PATH)
+
+    logger.info(f"Writing {EXPERIMENT_NAME} to {EXPERIMENT_NAME_RESULT_PATH}")
+    write_task_result(EXPERIMENT_NAME, EXPERIMENT_NAME_RESULT_PATH)
 
 elif TASK == "Score":
+    SCORE_ID = os.environ.get("SCORE_ID")
     SMILES_COLUMN_NAME = "smiles"
-    FEATURES_PATH = os.environ.get("FEATURES_PATH")
+    FEATURES_PATH = os.path.join(SCORE_ID, "features/features.pkl")
     TMP_FEATURES_PATH = os.path.join('/tmp', FEATURES_PATH)
+
     smiles: List[str] = os.environ.get("SMILES").replace(" ", "").split(",")
     dataframe = pd.DataFrame({SMILES_COLUMN_NAME: smiles})
 
-logger.info("Calculating features")
-features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)
+    logger.info("Calculating features")
+    features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)
 
-logger.info(f"Writing features to {TMP_FEATURES_PATH}")
-write_array(array=features, path=TMP_FEATURES_PATH)
+    logger.info(f"Writing features to {TMP_FEATURES_PATH}")
+    write_array(array=features, path=TMP_FEATURES_PATH)
 
-logger.info(
-    f"Uploading features from {TMP_FEATURES_PATH} to"
-    f" {FEATURES_PATH} in {RESULT_BUCKET_NAME} bucket")
-s3_client.upload_to_s3(
-    bucket=RESULT_BUCKET_NAME,
-    remote_path=FEATURES_PATH,
-    local_path=TMP_FEATURES_PATH
-)
+    logger.info(
+        f"Uploading features from {TMP_FEATURES_PATH} to"
+        f" {FEATURES_PATH} in {RESULT_BUCKET_NAME} bucket")
+    s3_client.upload_to_s3(
+        bucket=RESULT_BUCKET_NAME,
+        remote_path=FEATURES_PATH,
+        local_path=TMP_FEATURES_PATH
+    )
 
-# emitting results
-logger.info(f"Writing {FEATURES_PATH} to {FEATURES_PATH_RESULT_PATH}")
-write_task_result(FEATURES_PATH, FEATURES_PATH_RESULT_PATH)
-
-logger.info(f"Writing {TARGET_PATH} to {TARGET_PATH_RESULT_PATH}")
-write_task_result(TARGET_PATH, TARGET_PATH_RESULT_PATH)
-
-logger.info(f"Writing {EXPERIMENT_NAME} to {EXPERIMENT_NAME_RESULT_PATH}")
-write_task_result(EXPERIMENT_NAME, EXPERIMENT_NAME_RESULT_PATH)
-
+    # emitting results
+    logger.info(f"Writing {FEATURES_PATH} to {FEATURES_PATH_RESULT_PATH}")
+    write_task_result(FEATURES_PATH, FEATURES_PATH_RESULT_PATH)

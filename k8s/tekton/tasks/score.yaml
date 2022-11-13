@@ -5,9 +5,7 @@ metadata:
 spec:
   params:
     - name: modelPath
-      type: string
     - name: featuresPath
-      type: string
   steps:
     - name: score
       image: pharmsci/score:v0.1

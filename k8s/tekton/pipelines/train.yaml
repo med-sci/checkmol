@@ -65,13 +65,13 @@ spec:
     - name: resultBucketName
       value: $(params.resultBucketName)
     - name: targetPath
-      value: tasks.preprocess-train.results.TARGET_PATH
+      value: $(tasks.preprocess.results.TARGET_PATH)
     - name: featuresPath
-      value: tasks.preprocess-train.results.FEATURES_PATH
+      value: $(tasks.preprocess.results.FEATURES_PATH)
     - name: proteinName
       value: $(params.proteinName)
     - name: experimentName
-      value: tasks.preprocess-train.results.EXPERIMENT_NAME
+      value: $(tasks.preprocess.results.EXPERIMENT_NAME)
     - name: numRuns
       value: $(params.numRuns)
     - name: numSplits

@@ -1,0 +1,36 @@
+ apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: score
+spec:
+  description: >-
+    perform preprocessing and scoring
+  params:
+    - name: smiles
+    - name: scoreId
+    - name: resultBucketId
+      default: "score"
+    - name: modelPath
+  tasks:
+  - name: preprocess
+    params:
+    - name: smiles
+      value: $(params.smiles)
+    - name: scoreId
+      value: $(params.scoreId)
+    - name: resultBucketId
+      value: $(params.resultBucketId)
+    taskRef:
+      kind: Task
+      name: preprocess-score
+  - name: score
+    params:
+    - name: modelPath
+      value: $(params.modelPath)
+    - name: featuresPath
+      value: $(tasks.preprocess.results.FEATURES_PATH)
+    taskRef:
+      kind: Task
+      name: score
+    runAfter:
+      - preprocess
