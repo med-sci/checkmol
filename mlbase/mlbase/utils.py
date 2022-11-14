@@ -39,6 +39,10 @@ class ClientS3:
     ):
         self._client.Bucket(bucket).upload_file(local_path, remote_path)
 
+    def get_object(self, bucket: str, path: str):
+        object = self._client.Object(bucket, path)
+        return object.get()['Body'].read().decode()
+
 
 def write_array(array: np.ndarray, path: str):
     os.makedirs(os.path.dirname(path), exist_ok=True)
