@@ -55,7 +55,7 @@ with open (TMP_RESPONSE_PATH, "wt") as file:
     json.dump(response, file)
 
 
-ClientS3.upload_to_s3(
+s3_client.upload_to_s3(
     RESULT_BUCKET_NAME,
     os.path.join(SCORE_ID, "response.json"),
     TMP_RESPONSE_PATH
