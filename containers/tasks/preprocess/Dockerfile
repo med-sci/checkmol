@@ -5,6 +5,6 @@ RUN \
 RUN \
   conda install -c conda-forge rdkit
 RUN git clone https://github.com/med-sci/checkmol.git
-RUN pip install /k8s_mlops/mlbase
-WORKDIR /k8s_mlops/containers/tasks/preprocess/
+RUN pip install /checkmol/mlbase
+WORKDIR /checkmol/containers/tasks/preprocess/
 RUN pip install --no-cache-dir --upgrade -r requirements.txt

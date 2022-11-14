@@ -3,6 +3,6 @@ RUN \
   apt-get update && \
   apt-get -y install git
 RUN git clone https://github.com/med-sci/checkmol.git
-RUN pip install /k8s_mlops/mlbase
-WORKDIR /k8s_mlops/containers/tasks/train/
+RUN pip install /checkmol/mlbase
+WORKDIR /checkmol/containers/tasks/train/
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
