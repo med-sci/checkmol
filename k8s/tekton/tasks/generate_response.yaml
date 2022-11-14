@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: generate_response
+  name: generate-response
 spec:
   params:
     - name: status
@@ -10,7 +10,7 @@ spec:
     - name: scoreId
     - name: resultBucketName
   steps:
-    - name: generate_response
+    - name: generate-response
       image: pharmsci/generate_response:v0.1
       imagePullPolicy: IfNotPresent
       env:

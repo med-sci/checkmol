@@ -25,7 +25,7 @@ spec:
       - name: FEATURES_PATH_RESULT_PATH
         value: $(results.FEATURES_PATH.path)
       - name: SMILES_PATH_RESULT_PATH
-        value: $(results.FEATURES_PATH.path)
+        value: $(results.SMILES_PATH.path)
       envFrom:
         - configMapRef:
             name: preprocess

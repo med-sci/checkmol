@@ -23,8 +23,6 @@ spec:
     params:
     - name: modelPath
       value: $(params.modelPath)
-    - name: modelPath
-      value: $(params.smiles)
     - name: scoreId
       value: $(params.scoreId)
     - name: featuresPath
@@ -37,12 +35,12 @@ spec:
     runAfter:
       - preprocess
   finally:
-    - name: generate_response
+    - name: generate-response
       params:
       - name: status
         value: $(tasks.status)
       - name: resultsPath
-        value: tasks.score.results.RESULTS_PATH
+        value: $(tasks.score.results.RESULTS_PATH)
       - name: smilesPath
         value: $(tasks.preprocess.results.SMILES_PATH)
       - name: scoreId
@@ -50,4 +48,4 @@ spec:
       - name: resultBucketName
         value: "score"
       taskRef:
-        name: generate_response
+        name: generate-response

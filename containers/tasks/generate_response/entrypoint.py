@@ -30,13 +30,13 @@ response = {"Error": None}
 
 if STATUS == "Succeeded":
     logger.info(f"loading {SMILES_PATH} to {TMP_SMILES_PATH}")
-    ClientS3.load_from_s3(
+    s3_client.load_from_s3(
         bucket=RESULT_BUCKET_NAME,
         remote_path=SMILES_PATH,
         local_path=TMP_SMILES_PATH
     )
     logger.info(f"loading {RESULTS_PATH} to {TMP_RESULTS_PATH}")
-    ClientS3.load_from_s3(
+    s3_client.load_from_s3(
         bucket=RESULT_BUCKET_NAME,
         remote_path=RESULTS_PATH,
         local_path=TMP_RESULTS_PATH

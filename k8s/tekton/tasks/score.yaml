@@ -9,7 +9,7 @@ spec:
     - name: smilesPath
     - name: scoreId
   results:
-    - name: resultsPath
+    - name: RESULTS_PATH
   steps:
     - name: score
       image: pharmsci/score:v0.1
