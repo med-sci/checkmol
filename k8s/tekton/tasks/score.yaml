@@ -6,6 +6,10 @@ spec:
   params:
     - name: modelPath
     - name: featuresPath
+    - name: smilesPath
+    - name: scoreId
+  results:
+    - name: resultsPath
   steps:
     - name: score
       image: pharmsci/score:v0.1
@@ -19,6 +23,12 @@ spec:
         value: "score"
       - name: FEATURES_PATH
         value: "$(params.featuresPath)"
+      - name: SMILES_PATH
+        value: "$(params.smilesPath)"
+      - name: SCORE_ID
+        value: "$(params.scoreId)"
+      - name: RESULTS_PATH_RESULT_PATH
+        value: $(results.RESULTS_PATH.path)
       envFrom:
         - configMapRef:
             name: preprocess

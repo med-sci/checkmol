@@ -1,10 +1,11 @@
 import os
 import pandas as pd
+import numpy as np
 import uuid
 
 from typing import Literal, List
 from loguru import logger
-from mlbase.utils import write_array, ClientS3
+from mlbase.utils import write_array, ClientS3, write_task_result
 from preprocess.utils import (
     drop_duplicates,
     get_dataframe,
@@ -13,10 +14,6 @@ from preprocess.utils import (
     get_target,
     log_10_target
 )
-
-def write_task_result(value, path):
-    with open(path, "wt") as file:
-        file.write(value)
 
 TASK: Literal["Train", "Score"] = os.environ.get("TASK")
 
@@ -130,10 +127,25 @@ elif TASK == "Score":
     SCORE_ID = os.environ.get("SCORE_ID")
     SMILES_COLUMN_NAME = "smiles"
     FEATURES_PATH = os.path.join(SCORE_ID, "features/features.pkl")
+    SMILES_PATH = os.path.join(SCORE_ID, "smiles/smiles.pkl")
+    SMILES_PATH_RESULT_PATH = os.environ.get("SMILES_PATH_RESULT_PATH")
     TMP_FEATURES_PATH = os.path.join('/tmp', FEATURES_PATH)
+    TMP_SMILES_PATH = '/tmp/smiles.pkl'
 
     smiles: List[str] = os.environ.get("SMILES").replace(" ", "").split(",")
     dataframe = pd.DataFrame({SMILES_COLUMN_NAME: smiles})
+
+    logger.info(f"Writing SMILES to {TMP_SMILES_PATH}")
+    write_array(np.array(smiles), TMP_SMILES_PATH)
+
+    logger.info(
+        f"Uploading smiles from {TMP_SMILES_PATH} to"
+        f" {SMILES_PATH} in {RESULT_BUCKET_NAME} bucket")
+    s3_client.upload_to_s3(
+        bucket=RESULT_BUCKET_NAME,
+        remote_path=SMILES_PATH,
+        local_path=TMP_SMILES_PATH
+    )
 
     logger.info("Calculating features")
     features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)
@@ -153,3 +165,6 @@ elif TASK == "Score":
     # emitting results
     logger.info(f"Writing {FEATURES_PATH} to {FEATURES_PATH_RESULT_PATH}")
     write_task_result(FEATURES_PATH, FEATURES_PATH_RESULT_PATH)
+
+    logger.info(f"Writing {SMILES_PATH} to {SMILES_PATH_RESULT_PATH}")
+    write_task_result(SMILES_PATH, SMILES_PATH_RESULT_PATH)

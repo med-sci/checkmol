@@ -51,3 +51,8 @@ def read_array(path: str):
         return pickle.load(file=file)
 
 
+def write_task_result(value, path):
+    with open(path, "wt") as file:
+        file.write(value)
+
+

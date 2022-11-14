@@ -1,0 +1,30 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: generate_response
+spec:
+  params:
+    - name: status
+    - name: resultsPath
+    - name: smilesPath
+    - name: scoreId
+    - name: resultBucketName
+  steps:
+    - name: generate_response
+      image: pharmsci/generate_response:v0.1
+      imagePullPolicy: IfNotPresent
+      env:
+      - name: STATUS
+        value: "$(params.status)"
+      - name: RESULTS_PATH
+        value: "$(params.resultsPath)"
+      - name: SMILES_PATH
+        value: "$(params.smilesPath)"
+      - name: SCORE_ID
+        value: "$(params.scoreId)"
+      - name: RESULT_BUCKET_NAME
+        value: "$(params.resultBucketName)"
+      envFrom:
+        - configMapRef:
+            name: preprocess
+      command: ["python3", "entrypoint.py"]

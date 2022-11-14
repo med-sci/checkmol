@@ -6,10 +6,9 @@ spec:
   params:
     - name: smiles
     - name: scoreId
-    - name: resultBucketId
-      default: "score"
   results:
     - name: FEATURES_PATH
+    - name: SMILES_PATH
   steps:
     - name: preprocess-score
       image: pharmsci/preprocess:v0.2
@@ -24,6 +23,8 @@ spec:
       - name: SCORE_ID
         value: "$(params.scoreId)"
       - name: FEATURES_PATH_RESULT_PATH
+        value: $(results.FEATURES_PATH.path)
+      - name: SMILES_PATH_RESULT_PATH
         value: $(results.FEATURES_PATH.path)
       envFrom:
         - configMapRef:

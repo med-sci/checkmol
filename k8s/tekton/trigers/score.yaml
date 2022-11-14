@@ -1,33 +1,80 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerTemplate
 metadata:
-  name: preprocess-score
+  name: score-template
 spec:
   params:
-  - name: smiles
-  - name: featuresPath
+    - name: smiles
+    - name: scoreId
+    - name: modelPath
   resourcetemplates:
   - apiVersion: tekton.dev/v1beta1
-    kind: TaskRun
+    kind: PipelineRun
     metadata:
-      generateName: preprocess-score-
+      generateName: score-run-
     spec:
-      taskRef:
-        name: preprocess-score
+      pipelineRef:
+        name: score
       params:
       - name: smiles
-        value: "$(params.smiles)"
-      - name: featuresPath
-        value: "$(params.featuresPath)"
+        value: $(tt.params.smiles)
+      - name: scoreId
+        value: $(tt.params.scoreId)
+      - name: modelPath
+        value: $(tt.params.modelPath)
 ---
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
-  name: preprocess-score
+  name: score-binding
 spec:
   params:
   - name: smiles
-    value: "$(body.smiles)"
-  - name: featuresPath
-    value: "$(body.featuresPath)"
+    value: $(body.smiles)
+  - name: scoreId
+    value: $(body.scoreId)
+  - name: modelPath
+    value: $(body.modelPath)
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tekton-robot
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: triggers-eventlistener-binding
+subjects:
+- kind: ServiceAccount
+  name: tekton-robot
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-triggers-eventlistener-roles
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: triggers-eventlistener-clusterbinding
+subjects:
+- kind: ServiceAccount
+  name: tekton-robot
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-triggers-eventlistener-clusterroles
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: score-eventlistener
+spec:
+  serviceAccountName: tekton-robot
+  triggers:
+    - name: trigger-score
+      bindings:
+        - ref: score-binding
+      template:
+        ref: score-template

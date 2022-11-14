@@ -1,4 +1,5 @@
 import uuid
+import requests
 from typing import Literal, List
 
 from fastapi import FastAPI
