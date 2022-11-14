@@ -56,7 +56,7 @@ logger.info(f"Uploading results from {TMP_RESULTS_PATH} to {RESULTS_PATH}")
 s3_client.upload_to_s3(
     bucket=FEATURES_BUCKET_NAME,
     remote_path=RESULTS_PATH,
-    local_path=TMP_FEATURES_PATH
+    local_path=TMP_RESULTS_PATH
 )
 
 logger.info(f"Writing {RESULTS_PATH} to {RESULTS_PATH_RESULT_PATH}")

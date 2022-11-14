@@ -42,7 +42,7 @@ if STATUS == "Succeeded":
         local_path=TMP_RESULTS_PATH
     )
     predictions = read_array(TMP_RESULTS_PATH)
-    smiles = read_array(TMP_SMILES_PATH)
+    smiles = list(read_array(TMP_SMILES_PATH))
     response.update({key: value for key, value in zip(smiles, predictions)})
 elif STATUS == "Failed":
     response["Error"] = "PipelineFailure"
