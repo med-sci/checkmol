@@ -8,6 +8,9 @@ spec:
   containers:
     - name: api
       image: pharmsci/api:v0.1
+      envFrom:
+      - configMapRef:
+          name: preprocess
       command: [
         "uvicorn",
         "main:app",

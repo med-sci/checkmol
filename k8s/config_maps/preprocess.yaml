@@ -8,3 +8,4 @@ data:
   AWS_SECRET_ACCESS_KEY: "minioadmin"
   MLFLOW_TRACKING_URI: "http://mlflow-svc:5000/"
   MLFLOW_S3_ENDPOINT_URL: "http://minio-api-svc:9000"
+  SCORE_EVENT_LISTENER_URL: "http://el-score-eventlistener:8080"
