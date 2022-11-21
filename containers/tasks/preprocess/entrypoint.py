@@ -6,6 +6,7 @@ import uuid
 from typing import Literal, List
 from loguru import logger
 from mlbase.utils import write_array, ClientS3, write_task_result
+from mlbase.db import DBInterface
 from preprocess.utils import (
     drop_duplicates,
     get_dataframe,
@@ -30,6 +31,21 @@ s3_client = ClientS3(
     aws_access_key_id=ACCESS_KEY,
     aws_secret_access_key=SECRET_KEY
 )
+
+DB_HOST = os.environ.get("DB_HOST")
+DB_PORT = os.environ.get("DB_PORT")
+DB_USER = os.environ.get("DB_USER")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
+
+COLLECTION = "score"
+
+db = DBInterface(
+    host=DB_HOST,
+    port=DB_PORT,
+    user=DB_USER,
+    password=DB_PASSWORD
+)
+
 if TASK == "Train":
     TARGET_PATH_RESULT_PATH = os.environ.get("TARGET_PATH_RESULT_PATH")
     EXPERIMENT_NAME_RESULT_PATH = os.environ.get("EXPERIMENT_NAME_RESULT_PATH")
@@ -127,25 +143,11 @@ elif TASK == "Score":
     SCORE_ID = os.environ.get("SCORE_ID")
     SMILES_COLUMN_NAME = "smiles"
     FEATURES_PATH = os.path.join(SCORE_ID, "features/features.pkl")
-    SMILES_PATH = os.path.join(SCORE_ID, "smiles/smiles.pkl")
-    SMILES_PATH_RESULT_PATH = os.environ.get("SMILES_PATH_RESULT_PATH")
     TMP_FEATURES_PATH = os.path.join('/tmp', FEATURES_PATH)
-    TMP_SMILES_PATH = '/tmp/smiles.pkl'
 
-    smiles: List[str] = os.environ.get("SMILES").replace(" ", "").split(",")
+    smiles = db.get_record(COLLECTION, SCORE_ID)["smiles"]
+
     dataframe = pd.DataFrame({SMILES_COLUMN_NAME: smiles})
-
-    logger.info(f"Writing SMILES to {TMP_SMILES_PATH}")
-    write_array(np.array(smiles), TMP_SMILES_PATH)
-
-    logger.info(
-        f"Uploading smiles from {TMP_SMILES_PATH} to"
-        f" {SMILES_PATH} in {RESULT_BUCKET_NAME} bucket")
-    s3_client.upload_to_s3(
-        bucket=RESULT_BUCKET_NAME,
-        remote_path=SMILES_PATH,
-        local_path=TMP_SMILES_PATH
-    )
 
     logger.info("Calculating features")
     features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)
@@ -166,5 +168,3 @@ elif TASK == "Score":
     logger.info(f"Writing {FEATURES_PATH} to {FEATURES_PATH_RESULT_PATH}")
     write_task_result(FEATURES_PATH, FEATURES_PATH_RESULT_PATH)
 
-    logger.info(f"Writing {SMILES_PATH} to {SMILES_PATH_RESULT_PATH}")
-    write_task_result(SMILES_PATH, SMILES_PATH_RESULT_PATH)

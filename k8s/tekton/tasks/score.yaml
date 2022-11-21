@@ -4,9 +4,7 @@ metadata:
   name: score
 spec:
   params:
-    - name: modelPath
     - name: featuresPath
-    - name: smilesPath
     - name: scoreId
   results:
     - name: RESULTS_PATH
@@ -15,16 +13,12 @@ spec:
       image: pharmsci/score:v0.1
       imagePullPolicy: IfNotPresent
       env:
-      - name: MODEL_PATH
-        value: "$(params.modelPath)"
       - name: MODEL_BUCKET_NAME
         value: "mlflow"
       - name: FEATURES_BUCKET_NAME
         value: "score"
       - name: FEATURES_PATH
         value: "$(params.featuresPath)"
-      - name: SMILES_PATH
-        value: "$(params.smilesPath)"
       - name: SCORE_ID
         value: "$(params.scoreId)"
       - name: RESULTS_PATH_RESULT_PATH

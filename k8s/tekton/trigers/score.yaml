@@ -4,9 +4,7 @@ metadata:
   name: score-template
 spec:
   params:
-    - name: smiles
     - name: scoreId
-    - name: modelPath
   resourcetemplates:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
@@ -16,12 +14,8 @@ spec:
       pipelineRef:
         name: score
       params:
-      - name: smiles
-        value: $(tt.params.smiles)
       - name: scoreId
         value: $(tt.params.scoreId)
-      - name: modelPath
-        value: $(tt.params.modelPath)
 ---
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
@@ -29,12 +23,8 @@ metadata:
   name: score-binding
 spec:
   params:
-  - name: smiles
-    value: $(body.smiles)
   - name: scoreId
     value: $(body.scoreId)
-  - name: modelPath
-    value: $(body.modelPath)
 ---
 apiVersion: v1
 kind: ServiceAccount

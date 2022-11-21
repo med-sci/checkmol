@@ -1,7 +1,7 @@
 import os
 from loguru import logger
 from mlbase.utils import ClientS3, write_array, read_array, write_task_result
-
+from mlbase.db import DBInterface
 from score.utils import load_model
 
 
@@ -11,8 +11,6 @@ S3_ENDPOINT_URL = os.environ.get("S3_ENDPOINT_URL")
 
 MODEL_BUCKET_NAME = os.environ.get("MODEL_BUCKET_NAME")
 FEATURES_BUCKET_NAME = os.environ.get("FEATURES_BUCKET_NAME")
-MODEL_PATH = os.environ.get("MODEL_PATH")
-SMILES_PATH = os.environ.get("SMILES_PATH")
 SCORE_ID = os.environ.get("SCORE_ID")
 FEATURES_PATH = os.environ.get("FEATURES_PATH")
 RESULTS_PATH_RESULT_PATH = os.environ.get("RESULTS_PATH_RESULT_PATH")
@@ -21,6 +19,22 @@ TMP_FEATURES_PATH = os.path.join('/tmp', FEATURES_PATH)
 RESULTS_PATH = os.path.join(SCORE_ID, "results/results.pkl")
 TMP_RESULTS_PATH = "/tmp/results/results.pkl"
 TMP_MODEL_PATH = "/tmp/model.pkl"
+
+DB_HOST = os.environ.get("DB_HOST")
+DB_PORT = os.environ.get("DB_PORT")
+DB_USER = os.environ.get("DB_USER")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
+
+COLLECTION = "score"
+
+db = DBInterface(
+    host=DB_HOST,
+    port=DB_PORT,
+    user=DB_USER,
+    password=DB_PASSWORD
+)
+
+MODEL_PATH = db.get_record(COLLECTION, SCORE_ID)["modelPath"]
 
 s3_client = ClientS3(
     endpoint_url=S3_ENDPOINT_URL,

@@ -6,14 +6,10 @@ spec:
   description: >-
     perform preprocessing and scoring
   params:
-    - name: smiles
     - name: scoreId
-    - name: modelPath
   tasks:
   - name: preprocess
     params:
-    - name: smiles
-      value: $(params.smiles)
     - name: scoreId
       value: $(params.scoreId)
     taskRef:
@@ -21,14 +17,10 @@ spec:
       name: preprocess-score
   - name: score
     params:
-    - name: modelPath
-      value: $(params.modelPath)
     - name: scoreId
       value: $(params.scoreId)
     - name: featuresPath
       value: $(tasks.preprocess.results.FEATURES_PATH)
-    - name: smilesPath
-      value: $(tasks.preprocess.results.SMILES_PATH)
     taskRef:
       kind: Task
       name: score
@@ -39,13 +31,7 @@ spec:
       params:
       - name: status
         value: $(tasks.status)
-      - name: resultsPath
-        value: $(tasks.score.results.RESULTS_PATH)
-      - name: smilesPath
-        value: $(tasks.preprocess.results.SMILES_PATH)
       - name: scoreId
         value: $(params.scoreId)
-      - name: resultBucketName
-        value: "score"
       taskRef:
         name: generate-response

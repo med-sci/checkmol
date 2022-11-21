@@ -4,11 +4,9 @@ metadata:
   name: preprocess-score
 spec:
   params:
-    - name: smiles
     - name: scoreId
   results:
     - name: FEATURES_PATH
-    - name: SMILES_PATH
   steps:
     - name: preprocess-score
       image: pharmsci/preprocess:v0.2
@@ -16,16 +14,12 @@ spec:
       env:
       - name: TASK
         value: "Score"
-      - name: SMILES
-        value: "$(params.smiles)"
       - name: RESULT_BUCKET_NAME
         value: "score"
       - name: SCORE_ID
         value: "$(params.scoreId)"
       - name: FEATURES_PATH_RESULT_PATH
         value: $(results.FEATURES_PATH.path)
-      - name: SMILES_PATH_RESULT_PATH
-        value: $(results.SMILES_PATH.path)
       envFrom:
         - configMapRef:
             name: preprocess

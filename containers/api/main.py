@@ -1,5 +1,4 @@
 import os
-import uuid
 import requests
 
 from fastapi import FastAPI
@@ -9,14 +8,28 @@ from registry import get_model_path
 from fastapi.responses import RedirectResponse
 
 from mlbase.utils import ClientS3
+from mlbase.db import DBInterface
 
 SCORE_EVENT_LISTENER_URL = os.environ.get("SCORE_EVENT_LISTENER_URL")
 ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY_ID")
 SECRET_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 S3_ENDPOINT_URL = os.environ.get("S3_ENDPOINT_URL")
 
-RESULTS_BUCKET = "score"
+DB_HOST = os.environ.get("DB_HOST")
+DB_PORT = os.environ.get("DB_PORT")
+DB_USER = os.environ.get("DB_USER")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
 
+RESULTS_BUCKET = "score"
+COLLECTION = "score"
+
+
+db = DBInterface(
+    host=DB_HOST,
+    port=DB_PORT,
+    user=DB_USER,
+    password=DB_PASSWORD
+)
 class ScoreCase(BaseModel):
     smiles: str
     protein: str
@@ -24,33 +37,28 @@ class ScoreCase(BaseModel):
 
 app = FastAPI()
 
-score_id = uuid.uuid4().hex
-
 @app.get("/")
 async def index():
     return RedirectResponse("/docs")
 
-@app.post(f"/runs/{score_id}")
-async def score(score_case: ScoreCase, score_id: str=score_id):
+@app.post("/runs/{score_id}")
+async def score(score_case: ScoreCase, score_id: int):
     model_path = get_model_path(score_case.protein)
-    response = requests.post(
-        SCORE_EVENT_LISTENER_URL,
-        json={
+    db.add_record(COLLECTION,
+        {
             "smiles": score_case.smiles,
             "scoreId": score_id,
             "modelPath": model_path
+        }
+    )
+    response = requests.post(
+        SCORE_EVENT_LISTENER_URL,
+        json={
+            "scoreId": score_id,
         })
-    return response.json()
+    return response.status_code
 
 
 @app.get("/runs/")
 async def get_results(score_id: str):
-    s3_client = ClientS3(
-        endpoint_url=S3_ENDPOINT_URL,
-        aws_access_key_id=ACCESS_KEY,
-        aws_secret_access_key=SECRET_KEY
-    )
-    return s3_client.get_object(
-        bucket=RESULTS_BUCKET,
-        path=os.path.join(score_id, 'response.json')
-    )
+    return db.get_record(collection=COLLECTION, score_id=score_id)

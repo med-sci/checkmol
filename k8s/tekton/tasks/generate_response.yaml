@@ -5,10 +5,7 @@ metadata:
 spec:
   params:
     - name: status
-    - name: resultsPath
-    - name: smilesPath
     - name: scoreId
-    - name: resultBucketName
   steps:
     - name: generate-response
       image: pharmsci/generate_response:v0.1
@@ -18,8 +15,6 @@ spec:
         value: "$(params.status)"
       - name: RESULTS_PATH
         value: "$(params.resultsPath)"
-      - name: SMILES_PATH
-        value: "$(params.smilesPath)"
       - name: SCORE_ID
         value: "$(params.scoreId)"
       - name: RESULT_BUCKET_NAME
