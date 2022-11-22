@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import uuid
+import tempfile
 
 from typing import Literal, List
 from loguru import logger
@@ -143,34 +144,36 @@ if TASK == "Train":
 
 elif TASK == "Score":
     SCORE_ID = os.environ.get("SCORE_ID")
+
     SMILES_COLUMN_NAME = "smiles"
     FEATURES_PATH = os.path.join(SCORE_ID, "features/features.pkl")
-    TMP_FEATURES_PATH = os.path.join('/tmp', FEATURES_PATH)
 
     smiles = db.get_record(COLLECTION, SCORE_ID)["smiles"]
-
     dataframe = pd.DataFrame({SMILES_COLUMN_NAME: smiles})
 
     logger.info("Calculating features")
     features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)
 
-    logger.info(f"Writing features to {TMP_FEATURES_PATH}")
-    write_array(array=features, path=TMP_FEATURES_PATH)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp_features_path = os.path.join(tmpdir, FEATURES_PATH)
 
-    logger.info(
-        f"Uploading features from {TMP_FEATURES_PATH} to"
-        f" {FEATURES_PATH} in {RESULT_BUCKET_NAME} bucket")
-    s3_client.upload_to_s3(
-        bucket=RESULT_BUCKET_NAME,
-        remote_path=FEATURES_PATH,
-        local_path=TMP_FEATURES_PATH
-    )
+        logger.info(f"Writing features to {tmp_features_path}")
+        write_array(array=features, path=tmp_features_path)
+
+        logger.info(
+            f"Uploading features from {tmp_features_path} to"
+            f" {FEATURES_PATH} in {RESULT_BUCKET_NAME} bucket")
+        s3_client.upload_to_s3(
+            bucket=RESULT_BUCKET_NAME,
+            remote_path=FEATURES_PATH,
+            local_path=tmp_features_path
+        )
 
     db.update_record(
         COLLECTION,
         SCORE_ID,
         {
-            "features_path": FEATURES_PATH
+            "featuresPath": FEATURES_PATH
         }
     )
 

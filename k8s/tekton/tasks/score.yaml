@@ -4,10 +4,7 @@ metadata:
   name: score
 spec:
   params:
-    - name: featuresPath
     - name: scoreId
-  results:
-    - name: RESULTS_PATH
   steps:
     - name: score
       image: pharmsci/score:v0.1
@@ -17,12 +14,8 @@ spec:
         value: "mlflow"
       - name: FEATURES_BUCKET_NAME
         value: "score"
-      - name: FEATURES_PATH
-        value: "$(params.featuresPath)"
       - name: SCORE_ID
         value: "$(params.scoreId)"
-      - name: RESULTS_PATH_RESULT_PATH
-        value: $(results.RESULTS_PATH.path)
       envFrom:
         - configMapRef:
             name: preprocess

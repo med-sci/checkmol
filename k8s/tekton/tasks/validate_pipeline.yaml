@@ -1,24 +1,20 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: generate-response
+  name: validate-pipeline
 spec:
   params:
     - name: status
     - name: scoreId
   steps:
-    - name: generate-response
-      image: pharmsci/generate_response:v0.1
+    - name: validate-pipeline
+      image: pharmsci/validate_pipeline:v0.1
       imagePullPolicy: IfNotPresent
       env:
       - name: STATUS
         value: "$(params.status)"
-      - name: RESULTS_PATH
-        value: "$(params.resultsPath)"
       - name: SCORE_ID
         value: "$(params.scoreId)"
-      - name: RESULT_BUCKET_NAME
-        value: "$(params.resultBucketName)"
       envFrom:
         - configMapRef:
             name: preprocess

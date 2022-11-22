@@ -22,11 +22,11 @@ class DBInterface:
 
     def update_record(self, collection, score_id, updates: Dict):
         self.database[collection].update_one(
-            {"score_id": score_id},
-            {"$inc": updates}
+            {"scoreId": score_id},
+            {"$set": updates}
         )
     def get_record(self, collection: str, score_id: str):
-        return self.database[collection].find_one({"smiles_id": score_id})
+        return self.database[collection].find_one({"scoreId": score_id})
 
 
 class ScoreTask:

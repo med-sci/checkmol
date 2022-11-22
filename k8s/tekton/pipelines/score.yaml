@@ -19,19 +19,17 @@ spec:
     params:
     - name: scoreId
       value: $(params.scoreId)
-    - name: featuresPath
-      value: $(tasks.preprocess.results.FEATURES_PATH)
     taskRef:
       kind: Task
       name: score
     runAfter:
       - preprocess
   finally:
-    - name: generate-response
+    - name: validate-pipeline
       params:
       - name: status
         value: $(tasks.status)
       - name: scoreId
         value: $(params.scoreId)
       taskRef:
-        name: generate-response
+        name: validate-pipeline

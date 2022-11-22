@@ -10,7 +10,7 @@ data:
   MLFLOW_S3_ENDPOINT_URL: "http://minio-api-svc:9000"
   SCORE_EVENT_LISTENER_URL: "http://el-score-eventlistener:8080"
   DB_HOST: "mongo-svc"
-  DB_PORT: 27017
+  DB_PORT: "27017"
   DB_USER: "root"
   DB_PASSWORD: "root"
   DB_NAME: "main_db"

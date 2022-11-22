@@ -1,6 +1,7 @@
 import os
 import requests
 
+from typing import List
 from fastapi import FastAPI
 from pydantic import BaseModel
 
@@ -10,32 +11,28 @@ from fastapi.responses import RedirectResponse
 from mlbase.utils import ClientS3
 from mlbase.db import DBInterface
 
+
 SCORE_EVENT_LISTENER_URL = os.environ.get("SCORE_EVENT_LISTENER_URL")
-ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY_ID")
-SECRET_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
-S3_ENDPOINT_URL = os.environ.get("S3_ENDPOINT_URL")
 
 DB_HOST = os.environ.get("DB_HOST")
-DB_PORT = os.environ.get("DB_PORT")
+DB_PORT = int(os.environ.get("DB_PORT"))
 DB_USER = os.environ.get("DB_USER")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 DB_NAME = os.environ.get("DB_NAME")
 
-RESULTS_BUCKET = "score"
 COLLECTION = "score"
 
 print(DB_NAME)
 db = DBInterface(
     db_name=DB_NAME,
     host=DB_HOST,
-    port=int(DB_PORT),
+    port=DB_PORT,
     user=DB_USER,
     password=DB_PASSWORD
 )
 class ScoreCase(BaseModel):
-    smiles: str
+    smiles: list
     protein: str
-
 
 app = FastAPI()
 
@@ -44,7 +41,7 @@ async def index():
     return RedirectResponse("/docs")
 
 @app.post("/runs/{score_id}")
-async def score(score_case: ScoreCase, score_id: int):
+async def score(score_case: ScoreCase, score_id: str):
     model_path = get_model_path(score_case.protein)
     db.add_record(COLLECTION,
         {
