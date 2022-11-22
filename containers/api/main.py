@@ -58,6 +58,8 @@ async def score(score_case: ScoreCase, score_id: str):
     return response.status_code
 
 
-@app.get("/runs/")
+@app.get("/runs/{score_id}")
 async def get_results(score_id: str):
-    return db.get_record(collection=COLLECTION, score_id=score_id)
+    record = db.get_record(collection=COLLECTION, score_id=score_id)
+    record.pop("_id")
+    return record
