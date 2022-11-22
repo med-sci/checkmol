@@ -1,0 +1,5 @@
+export DB_HOST="mongo-svc"
+export DB_PORT="27017"
+export DB_USER="root"
+export DB_PASSWORD="root"
+export DB_NAME="main_db"

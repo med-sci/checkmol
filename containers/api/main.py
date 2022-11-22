@@ -19,14 +19,16 @@ DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = os.environ.get("DB_PORT")
 DB_USER = os.environ.get("DB_USER")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
+DB_NAME = os.environ.get("DB_NAME")
 
 RESULTS_BUCKET = "score"
 COLLECTION = "score"
 
-
+print(DB_NAME)
 db = DBInterface(
+    db_name=DB_NAME,
     host=DB_HOST,
-    port=DB_PORT,
+    port=int(DB_PORT),
     user=DB_USER,
     password=DB_PASSWORD
 )

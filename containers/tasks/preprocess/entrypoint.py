@@ -25,25 +25,27 @@ S3_ENDPOINT_URL = os.environ.get("S3_ENDPOINT_URL")
 RESULT_BUCKET_NAME = os.environ.get("RESULT_BUCKET_NAME")
 FEATURES_PATH_RESULT_PATH = os.environ.get("FEATURES_PATH_RESULT_PATH")
 
+DB_HOST = os.environ.get("DB_HOST")
+DB_PORT = os.environ.get("DB_PORT")
+DB_USER = os.environ.get("DB_USER")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
+DB_NAME = os.environ.get("DB_NAME")
+
+COLLECTION = "score"
+
+db = DBInterface(
+    db_name=DB_NAME,
+    host=DB_HOST,
+    port=int(DB_PORT),
+    user=DB_USER,
+    password=DB_PASSWORD
+)
+
 logger.info(f"Instantiating client..")
 s3_client = ClientS3(
     endpoint_url=S3_ENDPOINT_URL,
     aws_access_key_id=ACCESS_KEY,
     aws_secret_access_key=SECRET_KEY
-)
-
-DB_HOST = os.environ.get("DB_HOST")
-DB_PORT = os.environ.get("DB_PORT")
-DB_USER = os.environ.get("DB_USER")
-DB_PASSWORD = os.environ.get("DB_PASSWORD")
-
-COLLECTION = "score"
-
-db = DBInterface(
-    host=DB_HOST,
-    port=DB_PORT,
-    user=DB_USER,
-    password=DB_PASSWORD
 )
 
 if TASK == "Train":
@@ -164,7 +166,11 @@ elif TASK == "Score":
         local_path=TMP_FEATURES_PATH
     )
 
-    # emitting results
-    logger.info(f"Writing {FEATURES_PATH} to {FEATURES_PATH_RESULT_PATH}")
-    write_task_result(FEATURES_PATH, FEATURES_PATH_RESULT_PATH)
+    db.update_record(
+        COLLECTION,
+        SCORE_ID,
+        {
+            "features_path": FEATURES_PATH
+        }
+    )
 

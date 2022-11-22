@@ -5,8 +5,6 @@ metadata:
 spec:
   params:
     - name: scoreId
-  results:
-    - name: FEATURES_PATH
   steps:
     - name: preprocess-score
       image: pharmsci/preprocess:v0.2
@@ -18,8 +16,6 @@ spec:
         value: "score"
       - name: SCORE_ID
         value: "$(params.scoreId)"
-      - name: FEATURES_PATH_RESULT_PATH
-        value: $(results.FEATURES_PATH.path)
       envFrom:
         - configMapRef:
             name: preprocess

@@ -37,6 +37,16 @@ spec:
               name: api-svc
               port:
                 number: 8000
+  - host: express.lupuslucis.fvds.ru
+    http:
+        paths:
+        - path: "/"
+          pathType: Prefix
+          backend:
+            service:
+              name: mongo-express-svc
+              port:
+                number: 8081
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress

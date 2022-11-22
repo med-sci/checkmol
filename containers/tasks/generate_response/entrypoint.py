@@ -16,13 +16,15 @@ TMP_RESULTS_PATH = "/tmp/results.pkl"
 TMP_RESPONSE_PATH = "/tmp/response.json"
 
 DB_HOST = os.environ.get("DB_HOST")
-DB_PORT = os.environ.get("DB_PORT")
+DB_PORT = int(os.environ.get("DB_PORT"))
 DB_USER = os.environ.get("DB_USER")
+DB_NAME = os.environ.get("DB_Name")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 
 COLLECTION = "score"
 
 db = DBInterface(
+    db_name=DB_NAME,
     host=DB_HOST,
     port=DB_PORT,
     user=DB_USER,
