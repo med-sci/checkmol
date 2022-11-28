@@ -1,0 +1,64 @@
+[
+    {
+        "header": "Select Task",
+        "type": "Task",
+        "options": [
+            {
+                "option": "Interaction",
+                "optionClass": "interaction",
+                "spanValue": "biotech",
+                "descriptionSmall": "Small molecule - protein interaction",
+                "descriptionLong":
+                    "Inside the human body, drugs produce their effects by interacting with receptors - protein molecules on the surface (or inside) of a cell. Activation (or inhibition) of receptors leads to therapeutic effects such as pain relief or decrease in blood pressure. The <b>Interaction</b> mode allows to predict activity of a given molecule against several proteins (therapeutic targets) Or simply will given molecule interact with a receptor by activating or inhibiting it."
+            }
+        ]
+    },
+    {
+        "header": "Target protein",
+        "type": "Protein",
+        "options": [
+            {
+                "option": "NR3C4",
+                "optionClass": "NR3C4",
+                "spanValue": "biotech",
+                "descriptionSmall": "Androgen receptor",
+                "descriptionLong":
+                    "Androgen receptors are responsible for numerous functions in the human body. Testosterone and dihydrotestosterone is natural hormones which acts as activators of androgen receptors. Testosterone is responsible primarily for the development of male primary sexual characteristics, dihydrotestosterone is responsible for secondary male characteristics. In some diseases, such as testosterone insufficiency, activators of androgen receptors may lead to proper male development in childhood. And, for example, in case of prostate cancer - inhibition of androgen receptors may decrease tumor development"
+            }
+        ]
+    },
+    {
+        "header": "Interaction constatnt",
+        "type": "Constant",
+        "options": [
+            {
+                "option": "IC 50",
+                "optionClass": "IC-50",
+                "spanValue": "biotech",
+                "descriptionSmall": "Half maximal inhibitory concentration",
+                "descriptionLong":
+                    "IC 50 indicates the concentration of a small molecule needed to inhibit the protein function by half. In general, lower values of IC50 indicates a higher molecule activity for inhibiting protein and, higher values indicates that a given small molecule is less active in inhibiting target protein"
+            }
+        ]
+    },
+    {
+        "header": "Model mode",
+        "type": "Mode",
+        "options": [
+            {
+                "option": "regression",
+                "optionClass": "regression",
+                "spanValue": "biotech",
+                "descriptionSmall": "Regression model mode",
+                "descriptionLong": "Regression mode allows to predict an exact value of a given constant. At task results you will get predicted values, model uncertanity level and model metrics"
+            },
+            {
+                "option": "classification",
+                "optionClass": "classification",
+                "spanValue": "biotech",
+                "descriptionSmall": "Classification model mode",
+                "descriptionLong": "Classification mode allows to predict a class for a given molecule for being highly active or inective against target protein. At task results you will get predicted classes  and model metrics"
+            }
+        ]
+    }
+]
