@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 from registry import get_model_path
 from fastapi.responses import RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from mlbase.utils import ClientS3
 from mlbase.db import DBInterface
@@ -40,6 +41,19 @@ class ScoreCase(BaseModel):
 
 
 app = FastAPI()
+
+origins = [
+    'http://lupuslucis.fvds.ru',
+    'http://lupuslucis.fvds.ru:3000'
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def index():

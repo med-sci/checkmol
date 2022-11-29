@@ -1,6 +1,6 @@
 import interactionTask from './interactionTask.json' assert {type: 'json'}
 
-const apiUrl = 'http://api-svc:8000/'
+const apiUrl = 'http://api.lupuslucis.fvds.ru/'
 
 // ------interface------
 const sideMenu = document.querySelector("aside")
