@@ -46,18 +46,11 @@
         "type": "Mode",
         "options": [
             {
-                "option": "regression",
+                "option": "Regression",
                 "optionClass": "regression",
                 "spanValue": "biotech",
                 "descriptionSmall": "Regression model mode",
                 "descriptionLong": "Regression mode allows to predict an exact value of a given constant. At task results you will get predicted values, model uncertanity level and model metrics"
-            },
-            {
-                "option": "classification",
-                "optionClass": "classification",
-                "spanValue": "biotech",
-                "descriptionSmall": "Classification model mode",
-                "descriptionLong": "Classification mode allows to predict a class for a given molecule for being highly active or inective against target protein. At task results you will get predicted classes  and model metrics"
             }
         ]
     }

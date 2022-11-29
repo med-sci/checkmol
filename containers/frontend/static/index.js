@@ -1,11 +1,15 @@
 import interactionTask from './interactionTask.json' assert {type: 'json'}
 
 
+
 // ------interface------
 const sideMenu = document.querySelector("aside")
 const menuBtn = document.querySelector("#menu-btn")
 const closeBtn = document.querySelector("#close-btn")
 const themeTogggler = document.querySelector(".theme-toggler")
+const sideBar = document.querySelectorAll('.sidebar-item')
+const setUpTaskBtn = document.getElementById('setUpTaskBtn')
+const getResultsBtn = document.getElementById('getResultsBtn')
 
 menuBtn.addEventListener('click', () => {
     sideMenu.style.display = 'block';
@@ -21,6 +25,32 @@ themeTogggler.addEventListener('click', () => {
     themeTogggler.querySelector('span:nth-child(2)').classList.toggle('active')
 } )
 // ------END interface------
+
+// ---------side bar--------
+
+getResultsBtn.addEventListener('click', () => {
+    document.querySelector('main').style.display = 'none'
+    document.querySelector('section.get-results').style.display = 'block'
+    document.querySelector('.right .task-config').style.display = 'none'
+})
+setUpTaskBtn.addEventListener('click', () => {
+    document.querySelector('main').style.display = 'block'
+    document.querySelector('section.get-results').style.display = 'none'
+    if ((window.innerWidth > 890)){
+        document.querySelector('.right .task-config').style.display = 'block'
+    } else {
+        document.querySelector('.right .task-config').style.display = 'none'
+    }
+})
+
+for (let sideBarItem of sideBar) {
+    sideBarItem.addEventListener(
+        'click', () =>{
+            toggleSideBar()
+            sideBarItem.classList.add('active')
+        }
+    )
+}
 
 // ----------options--------
 
@@ -195,9 +225,31 @@ function sendConfig(smiles, config){
     console.log(config)
 }
 
+function toggleSideBar(){
+    for (let sideBarItem of sideBar) {
+        if (sideBarItem.classList.contains('active')){
+            sideBarItem.classList.remove('active')
+        }
+    }
+}
+
 function getAndParseSmiles(){
     return document.getElementById('smilesTextArea').value.replace(/\s/g, '').replace(/[\r\n]/gm, '').split(',')
 }
-
 document.querySelector('main').appendChild(createRow(0, interactionTask))
 document.querySelector('.task-config').appendChild(createElementWithClass('div', 'items'))
+
+window.onresize = () => {
+    if(window.innerWidth > 890) {
+        sideMenu.style.display = 'block'
+        if (document.querySelector('aside .sidebar .sidebar-item.active').getAttribute('id') === 'getResultsBtn'){
+            document.querySelector('.right .task-config').style.display = 'none'
+        }else{
+        document.querySelector('.right .task-config').style.display = 'block'
+        }
+        }
+    else{
+        sideMenu.style.display = 'none'
+        document.querySelector('.right .task-config').style.display = 'none'
+    }
+    }
