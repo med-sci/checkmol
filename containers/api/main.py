@@ -31,8 +31,13 @@ db = DBInterface(
     password=DB_PASSWORD
 )
 class ScoreCase(BaseModel):
-    smiles: list
-    protein: str
+    Constant: str
+    Mode: str
+    Protein: str
+    Task: str
+    id: str
+    smiles: List
+
 
 app = FastAPI()
 
@@ -42,12 +47,15 @@ async def index():
 
 @app.post("/runs/{score_id}")
 async def score(score_case: ScoreCase, score_id: str):
-    model_path = get_model_path(score_case.protein)
+    model_path = get_model_path(score_case.Protein)
     db.add_record(COLLECTION,
         {
             "smiles": score_case.smiles,
             "scoreId": score_id,
-            "modelPath": model_path
+            "modelPath": model_path,
+            "Constant": score_case.Constant,
+            "Protein": score_case.Protein,
+            "Task": score_case.Task
         }
     )
     response = requests.post(

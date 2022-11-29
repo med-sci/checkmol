@@ -1,6 +1,6 @@
 import interactionTask from './interactionTask.json' assert {type: 'json'}
 
-
+const apiUrl = 'http://api-svc:8000/'
 
 // ------interface------
 const sideMenu = document.querySelector("aside")
@@ -219,10 +219,20 @@ function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
   }
 
-function sendConfig(smiles, config){
-    config['id'] = String(getRandomArbitrary(1e9, 1e10))
+async function sendConfig(smiles, config){
+    const id = String(getRandomArbitrary(1e9, 1e10)).replace('.','')
+    config['id'] = id
     config['smiles'] = smiles
-    console.log(config)
+    const targetUrl = apiUrl + 'runs/'+ id
+    console.log(targetUrl)
+    let response = await fetch(targetUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(config)
+    })
+    console.log(response)
 }
 
 function toggleSideBar(){
