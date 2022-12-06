@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: minio
@@ -7,36 +7,36 @@ metadata:
     app: minio
 spec:
   replicas: 1
-    strategy:
-      type: RollingUpdate
-    selector:
-      matchLabels:
-        app: mongo
-    template:
-      metadata:
-        labels:
-          app: mongo
-      spec:
-        containers:
-          - name: minio
-            image: minio/minio:RELEASE.2022-12-02T19-19-22Z
-            command:
-              - /bin/bash
-              - -c
-            args:
-              - minio server /data --console-address :9090
-            envFrom:
-                - configMapRef:
-                    name: minio-config
-                - secretRef:
-                    name: minio-secret
-            volumeMounts:
-              - mountPath: /data
-                  volumes: minio-volume
-        volumes:
-          - name: mongo-volume
-            persistentVolumeClaim:
-              claimName: minio-pvc
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+        - name: minio
+          image: minio/minio:RELEASE.2022-12-02T19-19-22Z
+          command:
+            - /bin/bash
+            - -c
+          args:
+            - minio server /data --console-address :9090
+          envFrom:
+            - configMapRef:
+                name: minio-config
+            - secretRef:
+                name: minio-secret
+          volumeMounts:
+          - mountPath: /data
+            name: minio-volume
+      volumes:
+        - name: minio-volume
+          persistentVolumeClaim:
+            claimName: minio-pvc
 
 ---
 apiVersion: v1

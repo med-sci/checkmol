@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mlflow-server
@@ -26,15 +26,19 @@ spec:
             "--host",
             "0.0.0.0",
             "--backend-store-uri",
-            "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgresql-svc:5432/${POSTGRES_DB}",
+            "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgresql-svc:5432/$(POSTGRES_DB)",
             "--default-artifact-root",
             "s3://mlflow/"
           ]
           envFrom:
-              - configMapRef:
-                  name: mlflow-config
-              - secretRef:
-                  name: mlflow-secret
+            - configMapRef:
+                name: mlflow-config
+            - configMapRef:
+                name: postgres-config
+            - secretRef:
+                name: mlflow-secret
+            - secretRef:
+                name: postgres-secret
 ---
 apiVersion: v1
 kind: Service

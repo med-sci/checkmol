@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: tracking
@@ -28,8 +28,8 @@ spec:
             - secretRef:
                 name: postgres-secret
           volumeMounts:
-            - mountPath: "/var/lib/postgresql/data"
-                name: postgres-volume
+          - mountPath: "/var/lib/postgresql/data"
+            name: postgres-volume
       volumes:
       - name: postgres-volume
         persistentVolumeClaim:
@@ -48,7 +48,7 @@ spec:
       storage: 2Gi
   selector:
     matchLabels:
-      app: postgres
+      app: postgresql
 
 ---
 apiVersion: v1

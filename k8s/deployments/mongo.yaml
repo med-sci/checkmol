@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mongo
@@ -7,33 +7,33 @@ metadata:
     app: mongo
 spec:
   replicas: 1
-    strategy:
-      type: RollingUpdate
-    selector:
-      matchLabels:
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
         app: mongo
-    template:
-      metadata:
-        labels:
-          app: mongo
-      spec:
-        containers:
-          - name: mongo
-            image: mongo:6.0
-            ports:
-              - containerPort: 27017
-            envFrom:
-              - configMapRef:
-                  name: mongo-config
-              - secretRef:
-                  name: mongo-secret
-            volumeMounts:
-              - name: mongo-volume
-                mountPath: /data/db
-        volumes:
-          - name: mongo-volume
-            persistentVolumeClaim:
-              claimName: mongo-pvc
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:6.0
+          ports:
+            - containerPort: 27017
+          envFrom:
+            - configMapRef:
+                name: mongo-config
+            - secretRef:
+                name: mongo-secret
+          volumeMounts:
+            - name: mongo-volume
+              mountPath: /data/db
+      volumes:
+        - name: mongo-volume
+          persistentVolumeClaim:
+            claimName: mongo-pvc
 
 ---
 apiVersion: v1
@@ -65,7 +65,7 @@ spec:
       targetPort: 27017
       protocol: TCP
 ---
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mongo-express
@@ -73,16 +73,27 @@ metadata:
   labels:
     app: mongo-express
 spec:
-  containers:
-    - name: mongo-express
-      image: mongo-express:1.0.0-alpha.4
-      ports:
-        - containerPort: 8081
-      envFrom:
-        - configMapRef:
-            name: mongo-express-config
-        - secretRef:
-            name: mongo-express-secret
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo-express
+          image: mongo-express:1.0.0-alpha.4
+          ports:
+            - containerPort: 8081
+          envFrom:
+            - configMapRef:
+                name: mongo-express-config
+            - secretRef:
+                name: mongo-express-secret
 
 ---
 apiVersion: v1

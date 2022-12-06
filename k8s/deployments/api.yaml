@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: api
@@ -7,34 +7,34 @@ metadata:
     app: api
 spec:
   replicas: 1
-    strategy:
-      type: RollingUpdate
-    selector:
-      matchLabels:
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
         app: api
-    template:
-      metadata:
-        labels:
-          app: api
-      spec:
-        containers:
-          - name: api
-            image: pharmsci/api:v0.1
-            envFrom:
-            - configMapRef:
-                name: api-config
-            - configMapRef:
-                name: mongo-config
-            - secretRef:
-                name: mongo-secret
-            command: [
-              "uvicorn",
-              "main:app",
-              "--host",
-              "0.0.0.0",
-              "--port",
-              "8000"
-            ]
+    spec:
+      containers:
+        - name: api
+          image: pharmsci/api:v0.1
+          envFrom:
+          - configMapRef:
+              name: api-config
+          - configMapRef:
+              name: mongo-config
+          - secretRef:
+              name: mongo-secret
+          command: [
+            "uvicorn",
+            "main:app",
+            "--host",
+            "0.0.0.0",
+            "--port",
+            "8000"
+          ]
 ---
 apiVersion: v1
 kind: Service

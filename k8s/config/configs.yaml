@@ -44,8 +44,8 @@ metadata:
   name: mlflow-config
   namespace: tracking
 data:
-MLFLOW_S3_ENDPOINT_URL: "http://minio-api-svc:9000/"
-AWS_ACCESS_KEY_ID: "minioadmin"
+  MLFLOW_S3_ENDPOINT_URL: "http://minio-api-svc:9000/"
+  AWS_ACCESS_KEY_ID: "minioadmin"
 
 ---
 apiVersion: v1

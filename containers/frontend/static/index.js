@@ -1,6 +1,6 @@
 import interactionTask from './interactionTask.json' assert {type: 'json'}
 
-const apiUrl = process.env.API_URL
+const apiUrl = "http://api.lupuslucis.fvds.ru/"
 // ------interface------
 const sideMenu = document.querySelector("aside")
 const menuBtn = document.querySelector("#menu-btn")
