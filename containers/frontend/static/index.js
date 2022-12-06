@@ -1,7 +1,6 @@
 import interactionTask from './interactionTask.json' assert {type: 'json'}
 
-const apiUrl = 'http://api.lupuslucis.fvds.ru/'
-
+const apiUrl = process.env.API_URL
 // ------interface------
 const sideMenu = document.querySelector("aside")
 const menuBtn = document.querySelector("#menu-btn")
@@ -10,6 +9,8 @@ const themeTogggler = document.querySelector(".theme-toggler")
 const sideBar = document.querySelectorAll('.sidebar-item')
 const setUpTaskBtn = document.getElementById('setUpTaskBtn')
 const getResultsBtn = document.getElementById('getResultsBtn')
+const taskIdBtn = document.getElementById('taskIdBtn')
+const taskIdInput = document.getElementById('taskIdInput')
 
 menuBtn.addEventListener('click', () => {
     sideMenu.style.display = 'block';
@@ -81,7 +82,7 @@ function select(option) {
         if (nextLevel <= interactionTask.length-1){
             document.querySelector('main').appendChild(createRow(level+1, interactionTask))
         }else{
-            document.querySelector('main').appendChild(createSmilesForm())
+            document.querySelector('main').appendChild(createSmilesForm(level+2))
         }
         window.scrollTo(0, document.body.scrollHeight)
     }
@@ -114,7 +115,12 @@ function createElementWithClass(tag, className=null, content=null) {
 function createRow(level, task) {
     let localLevel = task[level]
     let row = createElementWithClass('div', 'row')
-    row.appendChild(createElementWithClass('h1', null, localLevel.header))
+    let header = createElementWithClass('div', 'options-header')
+    let optionsLogo = createElementWithClass('div', 'options-logo')
+    optionsLogo.appendChild(createElementWithClass('p', null, String(level+1)))
+    header.appendChild(optionsLogo)
+    header.appendChild(createElementWithClass('h1', null, localLevel.header))
+    row.appendChild(header)
     let options = createElementWithClass('div', 'options')
     for (let option of localLevel.options){
         let optionDiv = createElementWithClass('div', 'option')
@@ -162,16 +168,21 @@ function createTaskConfigItem(type, selection, level){
     return configItem
 }
 
-function createSmilesForm() {
+function createSmilesForm(level) {
     let smilesFormDiv = createElementWithClass('div', 'smiles-form')
     let smilesForm = createElementWithClass('form')
     let smilesTextArea = createElementWithClass('textarea', 'smiles-ta')
     let smilesBtn = createElementWithClass('div', 'smiles-btn', 'Set up task')
-    let smilesHeader = createElementWithClass('h1', null, 'Enter SMILEs')
+    let smilesHeader = createElementWithClass('div', 'options-header')
+    let smilesLogo = createElementWithClass('div', 'options-logo')
+    smilesLogo.appendChild(createElementWithClass('p', null, String(level)))
+    smilesHeader.appendChild(smilesLogo)
+    smilesHeader.appendChild(createElementWithClass('h1', null, 'Enter SMILES'))
     let smilesDescription = createElementWithClass('p', null, '*Have to be a valid coma separated SMILEs strings.')
 
     smilesBtn.setAttribute('id', 'smilesBtn')
     smilesBtn.addEventListener('click', () =>{
+        removeInfoBlock()
         let smiles = getAndParseSmiles()
         sendConfig(smiles, config)
     })
@@ -225,14 +236,25 @@ async function sendConfig(smiles, config){
     config['smiles'] = smiles
     const targetUrl = apiUrl + 'runs/'+ id
     console.log(targetUrl)
-    let response = await fetch(targetUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(config)
-    })
-    console.log(response)
+    try{
+        let response = await fetch(targetUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(config)
+        })
+        let status = response.status
+        console.log(status)
+        if (status === 200) {
+            var infoBlock = generateInfoBlock('success', 'Success!', `Your task id: ${id}`)
+        } else {
+            var infoBlock = generateInfoBlock('danger', 'Oops..', 'Something is wrong. Try one more time')
+        }
+    } catch(e){
+        var infoBlock = generateInfoBlock('danger', 'Oops..', 'Something is wrong. Try one more time')
+    }
+    document.querySelector('body').appendChild(infoBlock)
 }
 
 function toggleSideBar(){
@@ -262,4 +284,87 @@ window.onresize = () => {
         sideMenu.style.display = 'none'
         document.querySelector('.right .task-config').style.display = 'none'
     }
+}
+
+function generateInfoBlock(cls, header, message){
+    let infoBlock = createElementWithClass('div', 'notification')
+    let infoBlockContent = createElementWithClass('div', 'content')
+    let infoCloseBtn = createElementWithClass('div', 'close')
+    infoCloseBtn.addEventListener('click', () => {
+        removeInfoBlock()
+    })
+    infoCloseBtn.appendChild(createElementWithClass('span', 'material-icons-sharp','close'))
+    infoBlockContent.appendChild(createElementWithClass('h1', null, header))
+    infoBlockContent.appendChild(createElementWithClass('p', null, message))
+    infoBlock.classList.add(cls)
+    infoBlock.appendChild(infoBlockContent)
+    infoBlock.appendChild(infoCloseBtn)
+    return infoBlock
+}
+
+function removeInfoBlock(){
+    let infoChild = document.querySelector('.notification')
+    if (infoChild !== null) {
+        document.querySelector('body').removeChild(infoChild)
     }
+}
+
+
+taskIdBtn.addEventListener('click', async function(event){
+    event.preventDefault()
+    const taskId = taskIdInput.value
+    const targetUrl = apiUrl + 'runs/'+ taskId
+    try {
+        let response = await fetch(targetUrl)
+        let taskJson = await response.json()
+        var taskStatus = await taskJson.status
+        var taskResults = await taskJson.results
+        var taskConstant = await taskJson.Constant
+    } catch(e) {
+        var taskStatus = 'Failed'
+    }
+    if (taskStatus === 'Succeeded'){
+        var tstatus = 'Completed'
+        var divClass = 'success'
+    } else {
+        var tstatus = 'Failed'
+        var divClass = 'danger'
+    }
+    let getResultsSection = document.querySelector('section.get-results')
+    getResultsSection.appendChild(generateStatusBlock(taskId, tstatus, divClass))
+    if (taskStatus === 'Succeeded') {
+        let resultsTable = generateResultsTable(taskResults, taskConstant)
+        getResultsSection.appendChild(resultsTable)
+    }
+})
+
+function generateStatusBlock(taskId, taskStatus, divClass){
+    let resultsStatus = createElementWithClass('div', 'results-status')
+    resultsStatus.classList.add(divClass)
+    let message = createElementWithClass('div', 'message')
+    message.appendChild(createElementWithClass('h2', null, `Your task ${taskId} status ${taskStatus}`))
+    resultsStatus.appendChild(message)
+    return resultsStatus
+}
+
+function generateResultsTable(data, constant){
+    const results = createElementWithClass('div', 'results')
+    results.appendChild(createElementWithClass('h2', null, 'Results'))
+    const table = createElementWithClass('table')
+    const tableHead = createElementWithClass('thead')
+    const tableHeadRow = createElementWithClass('tr')
+    const tableBody = createElementWithClass('tbody', )
+    tableHeadRow.appendChild(createElementWithClass('th', null, 'SMILES'))
+    tableHeadRow.appendChild(createElementWithClass('th', null, `Predicted ${constant}`))
+    tableHead.appendChild(tableHeadRow)
+    for (const [key, value] of Object.entries(data)) {
+        let tableRow = createElementWithClass('tr')
+        tableRow.appendChild(createElementWithClass('td', null, key))
+        tableRow.appendChild(createElementWithClass('td', null, value))
+        tableBody.appendChild(tableRow)
+      }
+    table.appendChild(tableHead)
+    table.appendChild(tableBody)
+    results.appendChild(table)
+    return results
+}

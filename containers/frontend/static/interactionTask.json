@@ -14,7 +14,7 @@
         ]
     },
     {
-        "header": "Target protein",
+        "header": "Choose target protein",
         "type": "Protein",
         "options": [
             {
@@ -28,7 +28,7 @@
         ]
     },
     {
-        "header": "Interaction constatnt",
+        "header": "Select interaction constant",
         "type": "Constant",
         "options": [
             {
@@ -42,7 +42,7 @@
         ]
     },
     {
-        "header": "Model mode",
+        "header": "Set model mode",
         "type": "Mode",
         "options": [
             {

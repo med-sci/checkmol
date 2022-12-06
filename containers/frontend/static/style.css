@@ -10,7 +10,7 @@
     --color-info-light: #dce1eb;
     --color-dark: #363949;
     --color-light: rgba(132, 139, 200, 0.18);
-    --color-primary-variant: #111e88;
+    --color-primary-variant: #5164CB;
     --color-dark-variant:#677483;
     --color-background: #f6f6f9;
     --card-border-radius: 2rem;
@@ -20,6 +20,36 @@
     --card-padding: 1.8rem;
     --padding-1: 1.2rem;
     --box-shadow: 0 2rem 3rem var(--color-light);
+    --header-margin: 3.8rem;
+    --bs-btn-padding-x: 0.75rem;
+    --bs-btn-padding-y: 0.375rem;
+    --bs-btn-font-family: ;
+    --bs-btn-font-size: 1rem;
+    --bs-btn-font-weight: 600;
+    --bs-btn-line-height: 1.5;
+    --bs-btn-color: var(--color-primary-variant);
+    --bs-btn-bg: transparent;
+    --bs-btn-border-width: 2px;
+    --bs-btn-border-color: transparent;
+    --bs-btn-border-radius: 0.375rem;
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15),0 1px 1px rgba(0, 0, 0, 0.075);
+    --bs-btn-disabled-opacity: 0.65;
+    --bs-btn-focus-box-shadow: 0 0 0 0.25rem rgba(var(--bs-btn-focus-shadow-rgb), .5);
+    --bs-btn-color: var(--color-primary-variant);
+    --bs-btn-border-color: var(--color-primary-variant);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--color-primary-variant);
+    --bs-btn-hover-border-color: var(--color-primary-variant);
+    --bs-btn-focus-shadow-rgb: 13,110,253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--color-primary-variant)#0d6efd;
+    --bs-btn-active-border-color: var(--color-primary-variant);
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #0d6efd;
+    --bs-btn-disabled-bg: transparent;
+    --bs-btn-disabled-border-color: #0d6efd;
+    --bs-gradient: none;
 }
 
 /* ---- DARK THEME VARAIBLES ----- */
@@ -73,6 +103,7 @@ img {
 h1 {
     font-weight: 800;
     font-size: 1.8rem;
+    color: var(--color-primary-variant);
 }
 
 h2 {
@@ -98,6 +129,36 @@ small {
 textarea {
     color: var(--color-dark);
     resize: none;
+}
+
+.btn {
+    display: inline-block;
+    padding: var(--bs-btn-padding-y) var(--bs-btn-padding-x);
+    font-family: var(--bs-btn-font-family);
+    font-size: var(--bs-btn-font-size);
+    font-weight: var(--bs-btn-font-weight);
+    line-height: var(--bs-btn-line-height);
+    color: var(--bs-btn-color);
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    border: var(--bs-btn-border-width) solid var(--bs-btn-border-color);
+    border-radius: var(--bs-btn-border-radius);
+    background-color: var(--bs-btn-bg);
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+.btn:hover {
+    color: var(--bs-btn-hover-color);
+    background-color: var(--bs-btn-hover-bg);
+    border-color: var(--bs-btn-hover-border-color);
+}
+
+button:focus:not(:focus-visible) {
+    outline: 0;
 }
 
 .container {
@@ -241,7 +302,7 @@ main {
 
 main .header-content {
     background: var(--color-white);
-    margin-top: 3.8rem;
+    margin-top: var(--header-margin);
     padding: 1.2rem;
     padding-bottom: 2.2rem;
     border-radius: var(--border-radius-1);
@@ -276,15 +337,38 @@ main .header-content .content ul li .content span {
     font-size: 1.2rem;
 }
 
-main h1 {
-    margin-top: 1.4rem;
-}
-
 main .options {
     display: flex;
     flex-wrap: wrap;
     margin-top: 1.1rem;
     gap: 0.5rem;
+}
+
+.options-header {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.options-header .options-logo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    background: transparent;
+    border: 3px solid var(--color-primary-variant);
+    color: #000;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-right: 0.6rem;
+}
+
+.options-header .options-logo p{
+    color: var(--color-primary-variant);
 }
 
 main .options .option {
@@ -391,27 +475,158 @@ main .smiles-form form .smiles-btn:hover{
     box-shadow: none;
 }
 
-main .recent-orders {
-    margin-top: 2rem;
-    display: none;
+.notification {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    position: sticky;
+    padding: 0;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    border-radius: var(--border-radius-1);
+    bottom: 1rem;
+    right: 0;
+    width: 30rem;
+    height: 5rem;
+    opacity: 0.7;
 }
 
-main .recent-orders h2 {
-    margin-bottom: 0.8rem;
+.notification .close {
+    padding: 5px;
+    color: white;
+    cursor: pointer;
 }
 
-main .recent-orders table {
+.notification .content {
+    padding: 5px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+}
+
+.notification h1 {
+    margin: 0;
+    padding: 0;
+    display: block;
+    color: white;
+
+}
+
+.notification p {
+    display: block;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.notification p span {
+    user-select: all;
+}
+
+.notification.success,
+.results-status.success {
+    background: green;
+}
+
+.notification.warning {
+    background: yellow;
+}
+
+.notification.danger,
+.results-status.danger {
+    background: red;
+}
+
+section.get-results {
+    margin-top: calc(var(--header-margin) + 1.4rem + 4rem);
+}
+
+section.get-results h2{
+    color: var(--color-primary-variant);
+    margin-bottom: 1.2rem;
+}
+
+section.get-results .check-status form {
+    display: flex;
+    justify-content: space-between;
+}
+
+section.get-results .check-status form input{
+    width: 100%;
+    background: var(--color-white);
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius-1);
+    padding: 1.2rem;
+    border: transparent solid 2px;
+}
+
+section.get-results .check-status form input:focus{
+    border: var(--color-primary-variant) solid 2px;
+}
+
+section.get-results .check-status form input:hover {
+    box-shadow: none;
+}
+
+section.get-results .check-status button.check-status-btn{
+    width: 12rem;
+    box-shadow: var(--box-shadow);
+    margin-left: 1.5rem;
+}
+
+section.get-results .results-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+section.get-results .results-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 5rem;
+    opacity: 0.7;
+    border-radius: var(--border-radius-1);
+
+}
+
+section.get-results .results-status h2 {
+    display: block;
+    color: white;
+    margin: 0;
+    padding: 0;
+    margin-left: 1.8rem;
+}
+
+section.get-results .results-status span {
+    font-weight: 600;
+}
+
+section.get-results .results{
+    margin-top: 1.5rem;
+}
+
+section.get-results .results table {
     background: var(--color-white);
     width: 100%;
     padding: var(--card-padding);
-    border-radius: var(--card-border-radius);
-    text-align: center;
+    border-radius: var(--border-radius-1);
     box-shadow: var(--box-shadow);
     transition: all 300ms ease;
 }
 
-main .recent-orders table:hover {
+section.get-results .results table thead tr th{
+    text-align: start;
+}
+
+section.get-results .results table:hover {
     box-shadow: none;
+}
+
+section.get-results .results-status {
+    margin-top: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 table tbody td {
@@ -420,11 +635,11 @@ table tbody td {
     color: var(--color-dark-variant);
 }
 
-table tbody tr:last-child td {
-    border: none;
+table tbody tr:first-child td {
+    border-top: 3px solid #4d4d4d;
 }
 
-main .recent-orders a {
+section.get-results .results a {
     text-align: center;
     display: block;
     margin: 1rem auto;
@@ -534,6 +749,9 @@ section.get-results {
         grid-template-columns: 1fr;
 
     }
+    section.get-results{
+        margin-top: calc(var(--header-margin) + 1.4rem);
+    }
 }
 
 @media screen and (max-width: 890px) {
@@ -580,11 +798,7 @@ section.get-results {
         margin-top: 8rem;
         padding: 0 1rem;
     }
-    main .recent-orders {
-        position: relative;
-        margin-top: 3rem;
-        width: 100%;
-    }
+
     .right .top {
         position: fixed;
         top: 0;
@@ -615,6 +829,14 @@ section.get-results {
     .right .task-config {
         display: none;
     }
+    section.get-results{
+        margin: 1.8rem;
+        margin-top: 8rem;
+    }
+}
 
-
+@media screen and (max-width: 545px) {
+    .notification {
+        width: 95vw;
+    }
 }
