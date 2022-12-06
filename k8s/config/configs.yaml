@@ -44,7 +44,7 @@ metadata:
   name: mlflow-config
   namespace: tracking
 data:
-  MLFLOW_S3_ENDPOINT_URL: "http://minio-api-svc:9000/"
+  MLFLOW_S3_ENDPOINT_URL: "http://minio-api-svc.tracking:9000/"
   AWS_ACCESS_KEY_ID: "minioadmin"
 
 ---
@@ -68,6 +68,15 @@ data:
   ME_CONFIG_MONGODB_ADMINUSERNAME: "root"
   ME_CONFIG_MONGODB_PORT: "27017"
   ME_CONFIG_MONGODB_SERVER: mongo-svc
-
-
-
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pipeline-config
+data:
+  S3_ENDPOINT_URL: http://minio-api-svc.tracking:9000/
+  AWS_ACCESS_KEY_ID: "minioadmin"
+  MLFLOW_TRACKING_URI: http://mlflow-svc.tracking:5000/
+  DB_HOST: "mongo-svc"
+  DB_PORT: "27017"
+  DB_NAME: "main_db"

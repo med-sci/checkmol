@@ -78,11 +78,11 @@ spec:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: mongo
+      app: mongo-express
   template:
     metadata:
       labels:
-        app: mongo
+        app: mongo-express
     spec:
       containers:
         - name: mongo-express

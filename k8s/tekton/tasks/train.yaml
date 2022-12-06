@@ -54,5 +54,7 @@ spec:
         value: "$(params.testSize)"
       envFrom:
         - configMapRef:
-            name: preprocess
+            name: pipeline-config
+        - secretRef:
+            name: pipeline-secret
       command: [ "python3", "entrypoint.py"]

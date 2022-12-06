@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import uuid
 import random
 
 from mlflow import MlflowClient
@@ -27,6 +26,11 @@ SECRET_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 S3_ENDPOINT_URL = os.environ.get("S3_ENDPOINT_URL")
 RESULT_BUCKET_NAME = os.environ.get("RESULT_BUCKET_NAME")
 MLFLOW_TRACKING_URI = os.environ.get('MLFLOW_TRACKING_URI')
+
+print ('===============================')
+print(ACCESS_KEY)
+print(SECRET_KEY)
+print(S3_ENDPOINT_URL)
 
 FEATURES_PATH = os.environ.get("FEATURES_PATH")
 TARGET_PATH = os.environ.get("TARGET_PATH")

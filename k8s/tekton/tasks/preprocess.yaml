@@ -78,7 +78,9 @@ spec:
         value: $(results.EXPERIMENT_NAME.path)
       envFrom:
         - configMapRef:
-            name: preprocess
+            name: pipeline-config
+        - secretRef:
+            name: pipeline-secret
       command: ["python", "entrypoint.py"]
       args: [
         "-f",
