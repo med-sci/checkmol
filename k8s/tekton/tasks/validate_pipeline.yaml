@@ -17,5 +17,7 @@ spec:
         value: "$(params.scoreId)"
       envFrom:
         - configMapRef:
-            name: preprocess
+            name: pipeline-config
+        - secretRef:
+            name: pipeline-secret
       command: ["python3", "entrypoint.py"]

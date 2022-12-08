@@ -16,13 +16,12 @@ SCORE_EVENT_LISTENER_URL = os.environ.get("SCORE_EVENT_LISTENER_URL")
 
 DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = int(os.environ.get("DB_PORT"))
-DB_USER = os.environ.get("MONGO_INITDB_ROOT_USERNAME")
-DB_PASSWORD = os.environ.get("MONGO_INITDB_ROOT_PASSWORD")
+DB_USER = os.environ.get("DB_USER")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
 DB_NAME = os.environ.get("DB_NAME")
 
 COLLECTION = "score"
 
-print(DB_NAME)
 db = DBInterface(
     db_name=DB_NAME,
     host=DB_HOST,

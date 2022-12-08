@@ -4,10 +4,11 @@ metadata:
   name: api-config
   namespace: production
 data:
-  SCORE_EVENT_LISTENER_URL: "http://el-score-eventlistener:8080"
-  DB_HOST: "mongo-svc"
+  SCORE_EVENT_LISTENER_URL: "http://el-score-eventlistener.default:8080"
+  DB_HOST: "mongo-svc.production"
   DB_PORT: "27017"
   DB_NAME: "main_db"
+  DB_USER: "root"
 
 ---
 apiVersion: v1
@@ -77,6 +78,8 @@ data:
   S3_ENDPOINT_URL: http://minio-api-svc.tracking:9000/
   AWS_ACCESS_KEY_ID: "minioadmin"
   MLFLOW_TRACKING_URI: http://mlflow-svc.tracking:5000/
-  DB_HOST: "mongo-svc"
+  MLFLOW_S3_ENDPOINT_URL: "http://minio-api-svc.tracking:9000/"
+  DB_HOST: "mongo-svc.production"
   DB_PORT: "27017"
   DB_NAME: "main_db"
+  DB_USER: "root"

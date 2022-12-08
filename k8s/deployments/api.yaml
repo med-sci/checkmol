@@ -23,10 +23,8 @@ spec:
           envFrom:
           - configMapRef:
               name: api-config
-          - configMapRef:
-              name: mongo-config
           - secretRef:
-              name: mongo-secret
+              name: api-secret
           command: [
             "uvicorn",
             "main:app",
