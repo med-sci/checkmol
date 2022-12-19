@@ -7,7 +7,7 @@ spec:
     - name: scoreId
   steps:
     - name: preprocess-score
-      image: pharmsci/preprocess:v0.2
+      image: pharmsci/preprocess:v0.1
       imagePullPolicy: IfNotPresent
       env:
       - name: TASK

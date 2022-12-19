@@ -119,7 +119,7 @@ if TASK == "Train":
     )
     logger.info("Calculating features")
     features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)
-
+    features = np.nan_to_num(features)
     logger.info(f"Writing features to {TMP_FEATURES_PATH}")
     write_array(array=features, path=TMP_FEATURES_PATH)
 
