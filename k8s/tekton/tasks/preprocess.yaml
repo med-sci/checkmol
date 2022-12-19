@@ -49,7 +49,7 @@ spec:
     - name: EXPERIMENT_NAME
   steps:
     - name: preprocess-train
-      image: pharmsci/preprocess:v0.2
+      image: pharmsci/preprocess:v0.1
       imagePullPolicy: IfNotPresent
       env:
       - name: TASK

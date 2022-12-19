@@ -119,6 +119,7 @@ if TASK == "Train":
     )
     logger.info("Calculating features")
     features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)
+    logger.info(f"Removing NaNs from features")
     features = np.nan_to_num(features)
     logger.info(f"Writing features to {TMP_FEATURES_PATH}")
     write_array(array=features, path=TMP_FEATURES_PATH)
@@ -153,6 +154,7 @@ elif TASK == "Score":
 
     logger.info("Calculating features")
     features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)
+    logger.info(f"Removing NaNs from features")
     features = np.nan_to_num(features)
 
     with tempfile.TemporaryDirectory() as tmpdir:

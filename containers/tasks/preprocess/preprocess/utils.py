@@ -27,7 +27,7 @@ def calculate_features(dataframe: pd.DataFrame, smiles_col: str):
     molecules = [Chem.MolFromSmiles(s) for s in smiles]
     return np.array([[descriptor_func(molecule) for _, descriptor_func
                       in Descriptors.descList]
-                      for molecule in tqdm(molecules)])
+                      for molecule in tqdm(molecules)], dtype=np.float64)
 
 
 def log_10_target(target: np.ndarray):
