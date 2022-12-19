@@ -153,6 +153,7 @@ elif TASK == "Score":
 
     logger.info("Calculating features")
     features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)
+    features = np.nan_to_num(features)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp_features_path = os.path.join(tmpdir, FEATURES_PATH)

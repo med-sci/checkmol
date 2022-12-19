@@ -59,8 +59,9 @@ let config = {}
 
 function select(option) {
     if (option.classList.contains('selected')) {
-        option.style.width = '100%'
         document.querySelector('.options .option.selected .description').style.display = 'none'
+        document.querySelector('.options .option.selected').style.width = '15rem'
+        document.querySelector('.options .option.selected .image').style.background = 'var(--color-white)'
         let level = Number(option.getAttribute('level'))
         option.classList.remove('selected')
         removeTaskConfigItem(level)
@@ -68,8 +69,9 @@ function select(option) {
     }else{
         checkSelection()
         option.classList.add('selected')
-        option.style.width = '100%'
-        document.querySelector('.options .option.selected .description').style.display = 'block'
+        // document.querySelector('.options .option.selected').style.width = '100%'
+        // document.querySelector('.options .option.selected .description').style.display = 'none'
+        document.querySelector('.options .option.selected .image').style.background = 'var(--color-primary)'
         let level = Number(option.getAttribute('level'))
         removeTaskConfigItem(level)
         document.querySelector('.task-config .items').appendChild(
@@ -93,9 +95,10 @@ function checkSelection() {
     for (let element of elements){
         if (element.classList.contains("selected")) {
             document.querySelector(".options .option.selected .description").style.display = 'none'
+            document.querySelector('.options .option.selected .image').style.background = 'var(--color-white)'
             element.classList.remove("selected")
             if (element.style.width === '100%') {
-                element.style.width = '100%'
+                element.style.width = '15rem'
             }
         }
     }
@@ -125,14 +128,15 @@ function createRow(level, task) {
     for (let option of localLevel.options){
         let optionDiv = createElementWithClass('div', 'option')
         let optionHeader = createElementWithClass('div',  'header')
-        let optionIcon = createElementWithClass('div',  'icon')
-        let optionRight = createElementWithClass('div',  'right')
+        let optionImage = createElementWithClass('img')
+        let optionImageDiv = createElementWithClass('div', 'image')
+        optionImage.setAttribute('src', option.imgpath)
+        optionImageDiv.appendChild(optionImage)
+        let optionRight = createElementWithClass('div',  'bottom')
         let optionDescription = createElementWithClass('div', 'description')
-
-        optionIcon.appendChild(createElementWithClass('span', 'material-icons-sharp', option.spanValue))
         optionRight.appendChild(createElementWithClass('h2', null, option.option))
         optionRight.appendChild(createElementWithClass('small', 'text-muted', option.descriptionSmall))
-        optionHeader.appendChild(optionIcon)
+        optionHeader.appendChild(optionImageDiv)
         optionHeader.appendChild(optionRight)
         optionDescription.appendChild(createElementWithClass('p', null, option.descriptionLong))
 

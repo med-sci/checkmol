@@ -340,8 +340,10 @@ main .header-content .content ul li .content span {
 main .options {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: start;
     margin-top: 1.1rem;
-    gap: 0.5rem;
+    gap: 1.2rem;
 }
 
 .options-header {
@@ -374,29 +376,29 @@ main .options {
 main .options .option {
     background: var(--color-white);
     border-radius: var(--border-radius-1);
-    /* margin-top: 1rem; */
     box-shadow: var(--box-shadow);
-    width: 100%;
-    transition: all 300ms ease;
+    /* transition: all 300ms ease; */
     display: flex;
-    flex-direction: column;
+    width: 15rem;
+    flex-direction: row;
     justify-content: space-between;
     align-items: start;
     cursor: pointer;
+    padding: 1.5rem;
 }
 
 main .options .option:hover {
     box-shadow: none;
 }
 
-main .options .option > div span {
-    background: coral;
-    padding: 0.5rem;
-    border-radius: 50%;
-    color: var(--color-white);
-    font-size: 2rem;
-    /* margin: 0.5rem; */
+main .options .option .header .image {
+    display: flex;
+    background: var(--color-white);
 }
+main .options .option .header .image img {
+    width: 150px;
+}
+
 
 main .options .option  h2 {
     font-size: 1.2rem;
@@ -404,25 +406,19 @@ main .options .option  h2 {
 
 main .options .option .header {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: center;
-    margin-left: 1.8rem;
+    align-items: flex-start;
     gap: 1.2rem;
 }
 
 main .options .option .description {
-    padding: var(--card-padding);
-    margin-top: -0.8rem;
-    padding-top: 0;
-    margin-left: 4.2rem;
+    padding-left: 1.3rem;
     display: none;
 }
 
 main .row .options .option small {
     display: block;
-    margin-bottom: 1.2rem;
-    padding-right: var(--card-padding);
 }
 
 main .smiles-form form{
@@ -536,7 +532,7 @@ main .smiles-form form .smiles-btn:hover{
 }
 
 section.get-results {
-    margin-top: calc(var(--header-margin) + 1.4rem + 4rem);
+    margin-top: calc(var(--header-margin) + 1.4rem);
 }
 
 section.get-results h2{
