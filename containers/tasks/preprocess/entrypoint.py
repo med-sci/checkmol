@@ -14,7 +14,8 @@ from preprocess.utils import (
     drop_nan,
     calculate_features,
     get_target,
-    log_10_target
+    log_10_target,
+    scale_features
 )
 
 TASK: Literal["Train", "Score"] = os.environ.get("TASK")
@@ -121,6 +122,9 @@ if TASK == "Train":
     features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)
     logger.info(f"Removing NaNs from features")
     features = np.nan_to_num(features)
+    logger.info(f"Scaling features")
+    features = scale_features(features)
+
     logger.info(f"Writing features to {TMP_FEATURES_PATH}")
     write_array(array=features, path=TMP_FEATURES_PATH)
 

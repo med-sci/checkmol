@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+from sklearn.preprocessing import MinMaxScaler
+
 from rdkit import Chem
 from rdkit.Chem import Descriptors
 from tqdm import tqdm
@@ -27,8 +29,11 @@ def calculate_features(dataframe: pd.DataFrame, smiles_col: str):
     molecules = [Chem.MolFromSmiles(s) for s in smiles]
     return np.array([[descriptor_func(molecule) for _, descriptor_func
                       in Descriptors.descList]
-                      for molecule in tqdm(molecules)], dtype=np.float64)
+                      for molecule in tqdm(molecules)])
 
+def scale_features(features):
+    scaler = MinMaxScaler()
+    return scaler.fit_transform(features)
 
 def log_10_target(target: np.ndarray):
     return np.log10(target)
