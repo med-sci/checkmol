@@ -49,11 +49,18 @@ def write_array(array: np.ndarray, path: str):
     with open(path, 'wb') as file:
         pickle.dump(obj=array, file=file)
 
+def write_scaler(scaler, path: str):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'wb') as file:
+        pickle.dump(obj=scaler, file=file)
+
+def read_scaler(path: str):
+    with open(path, 'rb') as file:
+        return pickle.load(file=file)
 
 def read_array(path: str):
     with open(path, 'rb') as file:
         return pickle.load(file=file)
-
 
 def write_task_result(value, path):
     with open(path, "wt") as file:

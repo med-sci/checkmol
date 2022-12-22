@@ -5,7 +5,7 @@ from typing import List
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from registry import get_model_path
+from registry import get_model_path, get_scaler_path
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -60,6 +60,7 @@ async def index():
 @app.post("/runs/{score_id}")
 async def score(score_case: ScoreCase, score_id: str):
     model_path = get_model_path(score_case.Protein)
+    scaler_path = get_scaler_path(score_case.Protein)
     db.add_record(COLLECTION,
         {
             "smiles": score_case.smiles,
@@ -67,13 +68,15 @@ async def score(score_case: ScoreCase, score_id: str):
             "modelPath": model_path,
             "Constant": score_case.Constant,
             "Protein": score_case.Protein,
-            "Task": score_case.Task
+            "Task": score_case.Task,
+            "scalerPath": scaler_path
         }
     )
     response = requests.post(
         SCORE_EVENT_LISTENER_URL,
         json={
             "scoreId": score_id,
+            "scalerPath": scaler_path
         })
     return response.status_code
 

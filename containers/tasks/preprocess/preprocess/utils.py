@@ -33,7 +33,7 @@ def calculate_features(dataframe: pd.DataFrame, smiles_col: str):
 
 def scale_features(features):
     scaler = MinMaxScaler()
-    return scaler.fit_transform(features)
+    return scaler, scaler.fit_transform(features)
 
 def log_10_target(target: np.ndarray):
     return np.log10(target)

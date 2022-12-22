@@ -6,7 +6,7 @@ import tempfile
 
 from typing import Literal, List
 from loguru import logger
-from mlbase.utils import write_array, ClientS3, write_task_result
+from mlbase.utils import write_array, ClientS3, write_task_result, write_scaler, read_scaler
 from mlbase.db import DBInterface
 from preprocess.utils import (
     drop_duplicates,
@@ -15,7 +15,7 @@ from preprocess.utils import (
     calculate_features,
     get_target,
     log_10_target,
-    scale_features
+    scale_features,
 )
 
 TASK: Literal["Train", "Score"] = os.environ.get("TASK")
@@ -71,9 +71,8 @@ if TASK == "Train":
 
     TARGET_PATH = os.path.join(EXPERIMENT_NAME, "target/target.pkl")
     TMP_DATA_PATH = os.path.join('/tmp', DATA_PATH)
-    TMP_TARGET_PATH = os.path.join('/tmp', TARGET_PATH)
     FEATURES_PATH = os.path.join(EXPERIMENT_NAME, "features/features.pkl")
-    TMP_FEATURES_PATH = os.path.join('/tmp', FEATURES_PATH)
+    SCALER_PATH = os.path.join(EXPERIMENT_NAME, "scaler/scaler.pkl")
 
     logger.info(
         f"Loading data {DATA_PATH} from"
@@ -106,36 +105,54 @@ if TASK == "Train":
         logger.info("Converting target values to log10")
         target = log_10_target(target)
 
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp_target_path = os.path.join(tmpdir, TARGET_PATH)
+        logger.info(f"Writing target {TARGET_NAME} to {tmp_target_path}")
+        write_array(array=target, path=tmp_target_path)
 
-    logger.info(f"Writing target {TARGET_NAME} to {TMP_TARGET_PATH}")
-    write_array(array=target, path=TMP_TARGET_PATH)
+        logger.info(
+            f"Uploading {TARGET_NAME} from {tmp_target_path} to"
+            f" {TARGET_PATH} in {RESULT_BUCKET_NAME}")
 
-    logger.info(
-        f"Uploading {TARGET_NAME} from {TMP_TARGET_PATH} to"
-        f" {TARGET_PATH} in {RESULT_BUCKET_NAME}")
-    s3_client.upload_to_s3(
-        bucket=RESULT_BUCKET_NAME,
-        remote_path=TARGET_PATH,
-        local_path=TMP_TARGET_PATH
-    )
+        s3_client.upload_to_s3(
+            bucket=RESULT_BUCKET_NAME,
+            remote_path=TARGET_PATH,
+            local_path=tmp_target_path
+        )
     logger.info("Calculating features")
     features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)
+
     logger.info(f"Removing NaNs from features")
     features = np.nan_to_num(features)
+
     logger.info(f"Scaling features")
-    features = scale_features(features)
+    scaler, features = scale_features(features)
 
-    logger.info(f"Writing features to {TMP_FEATURES_PATH}")
-    write_array(array=features, path=TMP_FEATURES_PATH)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp_features_path = os.path.join(tmpdir, FEATURES_PATH)
+        logger.info(f"Writing features to {tmp_features_path}")
+        write_array(array=features, path=tmp_features_path)
 
-    logger.info(
-        f"Uploading features from {TMP_FEATURES_PATH} to"
-        f" {FEATURES_PATH} in {RESULT_BUCKET_NAME} bucket")
-    s3_client.upload_to_s3(
-        bucket=RESULT_BUCKET_NAME,
-        remote_path=FEATURES_PATH,
-        local_path=TMP_FEATURES_PATH
-    )
+        logger.info(
+            f"Uploading features from {tmp_features_path} to"
+            f" {FEATURES_PATH} in {RESULT_BUCKET_NAME} bucket")
+        s3_client.upload_to_s3(
+            bucket=RESULT_BUCKET_NAME,
+            remote_path=FEATURES_PATH,
+            local_path=tmp_features_path
+        )
+        tmp_scaler_path = os.path.join(tmpdir, SCALER_PATH)
+        logger.info(f"Writing scaler to {tmp_scaler_path}")
+        write_scaler(scaler=scaler, path=tmp_scaler_path)
+
+        logger.info(
+            f"Uploading scaler from {tmp_scaler_path} to"
+            f" {SCALER_PATH} in {RESULT_BUCKET_NAME} bucket")
+        s3_client.upload_to_s3(
+            bucket=RESULT_BUCKET_NAME,
+            remote_path=SCALER_PATH,
+            local_path=tmp_scaler_path
+        )
 
     # emitting results
     logger.info(f"Writing {FEATURES_PATH} to {FEATURES_PATH_RESULT_PATH}")
@@ -149,6 +166,7 @@ if TASK == "Train":
 
 elif TASK == "Score":
     SCORE_ID = os.environ.get("SCORE_ID")
+    SCALER_PATH = os.environ.get("SCALER_PATH")
 
     SMILES_COLUMN_NAME = "smiles"
     FEATURES_PATH = os.path.join(SCORE_ID, "features/features.pkl")
@@ -160,6 +178,19 @@ elif TASK == "Score":
     features = calculate_features(dataframe=dataframe, smiles_col=SMILES_COLUMN_NAME)
     logger.info(f"Removing NaNs from features")
     features = np.nan_to_num(features)
+    logger.info(f"Scaling features")
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmp_scaler_path = os.path.join(tmpdir, SCALER_PATH)
+
+        logger.info(f"Loading scaler from {SCALER_PATH} to {tmp_scaler_path} of {RESULT_BUCKET_NAME}")
+        s3_client.load_from_s3(
+            bucket=RESULT_BUCKET_NAME,
+            remote_path=SCALER_PATH,
+            local_path=tmp_scaler_path
+        )
+        scaler = read_scaler(tmp_scaler_path)
+        features = scaler.transform(features)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmp_features_path = os.path.join(tmpdir, FEATURES_PATH)

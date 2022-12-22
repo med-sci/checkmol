@@ -5,6 +5,7 @@ metadata:
 spec:
   params:
     - name: scoreId
+    - name: scalerPath
   resourcetemplates:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
@@ -16,6 +17,8 @@ spec:
       params:
       - name: scoreId
         value: $(tt.params.scoreId)
+      - name: scalerPath
+        value: $(tt.params.scalerPath)
 ---
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
@@ -25,6 +28,8 @@ spec:
   params:
   - name: scoreId
     value: $(body.scoreId)
+  - name: scalerPath
+    value: $(body.scalerPath)
 ---
 apiVersion: v1
 kind: ServiceAccount
