@@ -185,7 +185,7 @@ elif TASK == "Score":
 
         logger.info(f"Loading scaler from {SCALER_PATH} to {tmp_scaler_path} of {RESULT_BUCKET_NAME}")
         s3_client.load_from_s3(
-            bucket=RESULT_BUCKET_NAME,
+            bucket='train',
             remote_path=SCALER_PATH,
             local_path=tmp_scaler_path
         )
