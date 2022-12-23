@@ -166,7 +166,7 @@ if TASK == "Train":
 
 elif TASK == "Score":
     SCORE_ID = os.environ.get("SCORE_ID")
-    SCALER_PATH = os.environ.get("SCALER_PATH")
+    SCALER_PATH = db.get_record(COLLECTION, SCORE_ID)["scalerPath"]
 
     SMILES_COLUMN_NAME = "smiles"
     FEATURES_PATH = os.path.join(SCORE_ID, "features/features.pkl")

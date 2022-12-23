@@ -16,8 +16,6 @@ spec:
         value: "score"
       - name: SCORE_ID
         value: "$(params.scoreId)"
-      - name: SCALER_PATH
-        value: "$(params.scalerPath)"
       envFrom:
         - configMapRef:
             name: pipeline-config

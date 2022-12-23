@@ -76,7 +76,6 @@ async def score(score_case: ScoreCase, score_id: str):
         SCORE_EVENT_LISTENER_URL,
         json={
             "scoreId": score_id,
-            "scalerPath": scaler_path
         })
     return response.status_code
 
