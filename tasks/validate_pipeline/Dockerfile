@@ -1,10 +1,8 @@
-FROM continuumio/miniconda3:4.12.0
+FROM python:3.10-slim-buster
 RUN \
   apt-get update && \
-  apt-get -y install vim curl git
-RUN \
-  conda install -c conda-forge rdkit
+  apt-get -y install git
 RUN git clone https://github.com/med-sci/checkmol.git
 RUN pip install /checkmol/mlbase
-WORKDIR /checkmol/containers/tasks/preprocess/
+WORKDIR /checkmol/tasks/validate_pipeline/
 RUN pip install --no-cache-dir --upgrade -r requirements.txt

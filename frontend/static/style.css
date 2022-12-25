@@ -339,8 +339,8 @@ main .header-content .content ul li .content span {
 
 main .options {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    /* flex-wrap: wrap; */
+    align-items: flex-start;
     justify-content: start;
     margin-top: 1.1rem;
     gap: 1.2rem;
@@ -379,7 +379,7 @@ main .options .option {
     box-shadow: var(--box-shadow);
     /* transition: all 300ms ease; */
     display: flex;
-    width: 15rem;
+    width: 13rem;
     flex-direction: row;
     justify-content: space-between;
     align-items: start;
@@ -399,9 +399,8 @@ main .options .option .header .image img {
     width: 150px;
 }
 
-
 main .options .option  h2 {
-    font-size: 1.2rem;
+    font-size: 1.6rem;
 }
 
 main .options .option .header {
@@ -419,6 +418,7 @@ main .options .option .description {
 
 main .row .options .option small {
     display: block;
+    font-size: 1rem;
 }
 
 main .smiles-form form{
@@ -532,7 +532,7 @@ main .smiles-form form .smiles-btn:hover{
 }
 
 section.get-results {
-    margin-top: calc(var(--header-margin) + 1.4rem);
+    margin-top: calc(var(--header-margin) + 1.4rem + 4rem);
 }
 
 section.get-results h2{

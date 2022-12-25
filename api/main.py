@@ -9,6 +9,7 @@ from registry import get_model_path, get_scaler_path
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 
+from rdkit import Chem
 from mlbase.db import DBInterface
 
 
@@ -37,6 +38,9 @@ class ScoreCase(BaseModel):
     id: str
     smiles: List
 
+class ValidateRequest(BaseModel):
+    smiles: list
+
 
 app = FastAPI()
 
@@ -59,25 +63,31 @@ async def index():
 
 @app.post("/runs/{score_id}")
 async def score(score_case: ScoreCase, score_id: str):
-    model_path = get_model_path(score_case.Protein)
-    scaler_path = get_scaler_path(score_case.Protein)
-    db.add_record(COLLECTION,
-        {
-            "smiles": score_case.smiles,
-            "scoreId": score_id,
-            "modelPath": model_path,
-            "Constant": score_case.Constant,
-            "Protein": score_case.Protein,
-            "Task": score_case.Task,
-            "scalerPath": scaler_path
-        }
-    )
-    response = requests.post(
-        SCORE_EVENT_LISTENER_URL,
-        json={
-            "scoreId": score_id,
-        })
-    return response.status_code
+    if validate_smiles(smiles=score_case.smiles):
+
+        model_path = get_model_path(score_case.Protein)
+        scaler_path = get_scaler_path(score_case.Protein)
+
+        db.add_record(COLLECTION,
+            {
+                "smiles": score_case.smiles,
+                "scoreId": score_id,
+                "modelPath": model_path,
+                "Constant": score_case.Constant,
+                "Protein": score_case.Protein,
+                "Task": score_case.Task,
+                "scalerPath": scaler_path
+            }
+        )
+        response = requests.post(
+            SCORE_EVENT_LISTENER_URL,
+            json={
+                "scoreId": score_id,
+            })
+        if response.status_code == 200:
+            return {"status": "Ok"}
+        return {"status": "Error"}
+    return {"status": "ValidationError"}
 
 
 @app.get("/runs/{score_id}")
@@ -85,3 +95,10 @@ async def get_results(score_id: str):
     record = db.get_record(collection=COLLECTION, score_id=score_id)
     record.pop("_id")
     return record
+
+
+def validate_smiles(smiles):
+    mols = [Chem.MolFromSmiles(s) for s in smiles]
+    if None in mols:
+        return False
+    return True

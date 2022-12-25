@@ -59,9 +59,9 @@ let config = {}
 
 function select(option) {
     if (option.classList.contains('selected')) {
-        document.querySelector('.options .option.selected .description').style.display = 'none'
         document.querySelector('.options .option.selected').style.width = '15rem'
         document.querySelector('.options .option.selected .image').style.background = 'var(--color-white)'
+        document.querySelector('.options .option.selected small').style.display = 'none'
         let level = Number(option.getAttribute('level'))
         option.classList.remove('selected')
         removeTaskConfigItem(level)
@@ -69,9 +69,8 @@ function select(option) {
     }else{
         checkSelection()
         option.classList.add('selected')
-        // document.querySelector('.options .option.selected').style.width = '100%'
-        // document.querySelector('.options .option.selected .description').style.display = 'none'
         document.querySelector('.options .option.selected .image').style.background = 'var(--color-primary)'
+        document.querySelector('.options .option.selected small').style.display = 'block'
         let level = Number(option.getAttribute('level'))
         removeTaskConfigItem(level)
         document.querySelector('.task-config .items').appendChild(
@@ -94,8 +93,8 @@ function checkSelection() {
     let elements = document.querySelectorAll(".selected")
     for (let element of elements){
         if (element.classList.contains("selected")) {
-            document.querySelector(".options .option.selected .description").style.display = 'none'
             document.querySelector('.options .option.selected .image').style.background = 'var(--color-white)'
+            document.querySelector('.options .option.selected small').style.display = 'none'
             element.classList.remove("selected")
             if (element.style.width === '100%') {
                 element.style.width = '15rem'
@@ -133,15 +132,14 @@ function createRow(level, task) {
         optionImage.setAttribute('src', option.imgpath)
         optionImageDiv.appendChild(optionImage)
         let optionRight = createElementWithClass('div',  'bottom')
-        let optionDescription = createElementWithClass('div', 'description')
         optionRight.appendChild(createElementWithClass('h2', null, option.option))
-        optionRight.appendChild(createElementWithClass('small', 'text-muted', option.descriptionSmall))
+        let smallDescription = createElementWithClass('small', 'text-muted', option.descriptionSmall)
+        smallDescription.style.display = 'none'
+        optionRight.appendChild(smallDescription)
         optionHeader.appendChild(optionImageDiv)
         optionHeader.appendChild(optionRight)
-        optionDescription.appendChild(createElementWithClass('p', null, option.descriptionLong))
 
         optionDiv.appendChild(optionHeader)
-        optionDiv.appendChild(optionDescription)
         optionDiv.addEventListener('click', () => {select(optionDiv)})
         optionDiv.setAttribute('type', localLevel.type)
         optionDiv.setAttribute('level', level)
@@ -188,6 +186,7 @@ function createSmilesForm(level) {
     smilesBtn.addEventListener('click', () =>{
         removeInfoBlock()
         let smiles = getAndParseSmiles()
+
         sendConfig(smiles, config)
     })
     smilesTextArea.setAttribute('placeholder', 'O=C(C)Oc1ccccc1C(=O)O,')
@@ -249,9 +248,15 @@ async function sendConfig(smiles, config){
             body: JSON.stringify(config)
         })
         let status = response.status
-        console.log(status)
         if (status === 200) {
-            var infoBlock = generateInfoBlock('success', 'Success!', `Your task id: ${id}`)
+            let responseJson = await response.json()
+            if (responseJson.status === 'Ok'){
+                var infoBlock = generateInfoBlock('success', 'Success!', `Your task id: ${id}`)
+            } else if(responseJson.status === 'ValidationError') {
+                var infoBlock = generateInfoBlock('danger', 'Invalid SMILES', 'Please, provide a valid SMILES')
+            } else {
+                var infoBlock = generateInfoBlock('danger', 'Oops..', 'Something is wrong. Try one more time')
+            }
         } else {
             var infoBlock = generateInfoBlock('danger', 'Oops..', 'Something is wrong. Try one more time')
         }
@@ -372,3 +377,4 @@ function generateResultsTable(data, constant){
     results.appendChild(table)
     return results
 }
+

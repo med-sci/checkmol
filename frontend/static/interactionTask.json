@@ -1,0 +1,68 @@
+[
+    {
+        "header": "Select Task",
+        "type": "Task",
+        "options": [
+            {
+                "option": "Interaction",
+                "optionClass": "interaction",
+                "imgpath": "./img/EGFR.png",
+                "descriptionSmall": "Small molecule - protein interaction"
+            }
+        ]
+    },
+    {
+        "header": "Choose target protein",
+        "type": "Protein",
+        "options": [
+            {
+                "option": "NR3C4",
+                "optionClass": "NR3C4",
+                "imgpath": "./img/NR3C4.png",
+                "descriptionSmall": "Androgen receptor\n"
+            },
+            {
+                "option": "EGFR",
+                "optionClass": "EGFR",
+                "imgpath": "./img/EGFR.png",
+                "descriptionSmall": "Epidermal growth factor receptor"
+            },
+            {
+                "option": "VEGFR2",
+                "optionClass": "VEGFR2",
+                "imgpath": "./img/VEGFR2.png",
+                "descriptionSmall": "Vascular endothelial growth factor receptor 2"
+            }
+        ]
+    },
+    {
+        "header": "Select interaction constant",
+        "type": "Constant",
+        "options": [
+            {
+                "option": "IC 50",
+                "optionClass": "IC-50",
+                "imgpath": "./img/EGFR.png",
+                "descriptionSmall": "Half maximal inhibitory concentration"
+            },
+            {
+                "option": "pIC 50",
+                "optionClass": "pIC-50",
+                "imgpath": "./img/EGFR.png",
+                "descriptionSmall": "Negative logarithm of IC 50"
+            }
+        ]
+    },
+    {
+        "header": "Set model mode",
+        "type": "Mode",
+        "options": [
+            {
+                "option": "Regression",
+                "optionClass": "regression",
+                "imgpath": "./img/EGFR.png",
+                "descriptionSmall": "R2 score mean on cross-validation: 0.6"
+            }
+        ]
+    }
+]

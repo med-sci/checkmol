@@ -4,5 +4,5 @@ RUN \
   apt-get -y install git
 RUN git clone https://github.com/med-sci/checkmol.git
 RUN pip install /checkmol/mlbase
-WORKDIR /checkmol/containers/tasks/train/
+WORKDIR /checkmol/api
 RUN pip install --no-cache-dir --upgrade -r requirements.txt

@@ -89,5 +89,6 @@ spec:
     taskRef:
       kind: Task
       name: train
+    Timeout: "4h"
     runAfter:
       - preprocess
