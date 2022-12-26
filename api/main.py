@@ -85,7 +85,8 @@ async def score(score_case: ScoreCase, score_id: str):
             json={
                 "scoreId": score_id,
             })
-        if response.status_code == 200:
+        logger.info(f"Status code: {response.status_code}")
+        if int(response.status_code) == 200:
             return {"status": "Ok"}
         return {"status": "Error"}
     return {"status": "ValidationError"}
