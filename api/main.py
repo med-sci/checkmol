@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from rdkit import Chem
 from mlbase.db import DBInterface
+from loguru import logger
 
 
 SCORE_EVENT_LISTENER_URL = os.environ.get("SCORE_EVENT_LISTENER_URL")
@@ -63,8 +64,8 @@ async def index():
 
 @app.post("/runs/{score_id}")
 async def score(score_case: ScoreCase, score_id: str):
+    logger.info(f"Task id: {score_id}")
     if validate_smiles(smiles=score_case.smiles):
-
         model_path = get_model_path(score_case.Protein)
         scaler_path = get_scaler_path(score_case.Protein)
 
@@ -96,9 +97,13 @@ async def get_results(score_id: str):
     record.pop("_id")
     return record
 
-
 def validate_smiles(smiles):
+    logger.info(f"SMILES: {smiles}")
+    if smiles == [""]:
+        return False
+
     mols = [Chem.MolFromSmiles(s) for s in smiles]
+
     if None in mols:
         return False
     return True

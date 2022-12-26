@@ -248,8 +248,10 @@ async function sendConfig(smiles, config){
             body: JSON.stringify(config)
         })
         let status = response.status
+        console.log(status)
         if (status === 200) {
             let responseJson = await response.json()
+            console.log(responseJson)
             if (responseJson.status === 'Ok'){
                 var infoBlock = generateInfoBlock('success', 'Success!', `Your task id: ${id}`)
             } else if(responseJson.status === 'ValidationError') {

@@ -1,7 +1,9 @@
-FROM python:3.10-slim-buster
+FROM continuumio/miniconda3:4.12.0
 RUN \
   apt-get update && \
   apt-get -y install git
+RUN \
+  conda install -c conda-forge rdkit
 RUN git clone https://github.com/med-sci/checkmol.git
 RUN pip install /checkmol/mlbase
 WORKDIR /checkmol/api
