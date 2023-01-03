@@ -65,7 +65,8 @@ async def index():
 @app.post("/validate_captcha/{token}")
 async def validate_captcha(token: str):
     secretKey = '6Ld2r8gjAAAAAGbj4VpgQk-8UPxBtSUwvLUTiwCl'
-    url = f'https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}'
+
+    url = f'https://www.google.com/recaptcha/api/siteverify?secret={secretKey}&response={token}'
     return requests.post(url).json()
 
 @app.post("/runs/{score_id}")
