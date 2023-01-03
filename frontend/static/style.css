@@ -454,7 +454,7 @@ main .smiles-form form:focus-within{
     border: 2px solid var(--color-primary);
 }
 
-main .smiles-form form .smiles-btn {
+main .smiles-form .smiles-btn {
     font-size: 1.2rem;
     padding: 0.5rem 1rem;
     margin-top: 1rem;
@@ -471,6 +471,10 @@ main .smiles-form form .smiles-btn:hover{
     box-shadow: none;
 }
 
+main .smiles-form .form-submit{
+    margin-top: 1.2rem;
+    display: flex;
+}
 .notification {
     display: flex;
     justify-content: space-between;

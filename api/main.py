@@ -62,6 +62,12 @@ app.add_middleware(
 async def index():
     return RedirectResponse("/docs")
 
+@app.post("/validate_captcha/{token}")
+async def validate_captcha(token: str):
+    secretKey = '6Ld2r8gjAAAAAGbj4VpgQk-8UPxBtSUwvLUTiwCl'
+    url = f'https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}'
+    return requests.post(url)
+
 @app.post("/runs/{score_id}")
 async def score(score_case: ScoreCase, score_id: str):
     logger.info(f"Task id: {score_id}")

@@ -83,7 +83,8 @@ function select(option) {
         if (nextLevel <= interactionTask.length-1){
             document.querySelector('main').appendChild(createRow(level+1, interactionTask))
         }else{
-            document.querySelector('main').appendChild(createSmilesForm(level+2))
+            let [widgetId, smilesForm] =  createSmilesForm(level+2)
+            document.querySelector('main').appendChild(smilesForm)
         }
         window.scrollTo(0, document.body.scrollHeight)
     }
@@ -174,14 +175,42 @@ function createSmilesForm(level) {
     let smilesFormDiv = createElementWithClass('div', 'smiles-form')
     let smilesForm = createElementWithClass('form')
     let smilesTextArea = createElementWithClass('textarea', 'smiles-ta')
-    let smilesBtn = createElementWithClass('div', 'smiles-btn', 'Set up task')
     let smilesHeader = createElementWithClass('div', 'options-header')
     let smilesLogo = createElementWithClass('div', 'options-logo')
+    let formSubmit = createElementWithClass('div', 'form-submit')
     smilesLogo.appendChild(createElementWithClass('p', null, String(level)))
     smilesHeader.appendChild(smilesLogo)
     smilesHeader.appendChild(createElementWithClass('h1', null, 'Enter SMILES'))
     let smilesDescription = createElementWithClass('p', null, '*Have to be a valid coma separated SMILEs strings.')
+    smilesTextArea.setAttribute('placeholder', 'O=C(C)Oc1ccccc1C(=O)O,')
+    smilesTextArea.setAttribute('id', 'smilesTextArea')
+    smilesTextArea.setAttribute('rows', '5')
+    smilesForm.appendChild(smilesTextArea)
+    smilesForm.appendChild(smilesDescription)
+    smilesFormDiv.appendChild(smilesHeader)
+    smilesFormDiv.appendChild(smilesForm)
+    let widgetId = grecaptcha.render(
+        formSubmit,
+        {"sitekey": "6Ld2r8gjAAAAAP_QFG9k3v8YYMYkiOtOZz-7jtSq", "callback": sendRecaptcha}
+        )
+    smilesFormDiv.appendChild(formSubmit)
 
+    return [widgetId, smilesFormDiv]
+}
+
+async function sendRecaptcha(token) {
+    const url = apiUrl + '/validate_captcha/' + token
+    let response = await fetch(
+        url, {
+            method: 'POST'
+        }
+    )
+    let responseJson = await response.json()
+    console.log(responseJson)
+}
+
+function createSmilesBtn() {
+    let smilesBtn = createElementWithClass('div', 'smiles-btn', 'Set up task')
     smilesBtn.setAttribute('id', 'smilesBtn')
     smilesBtn.addEventListener('click', () =>{
         removeInfoBlock()
@@ -189,16 +218,6 @@ function createSmilesForm(level) {
 
         sendConfig(smiles, config)
     })
-    smilesTextArea.setAttribute('placeholder', 'O=C(C)Oc1ccccc1C(=O)O,')
-    smilesTextArea.setAttribute('id', 'smilesTextArea')
-    smilesTextArea.setAttribute('rows', '5')
-    smilesForm.appendChild(smilesTextArea)
-    smilesForm.appendChild(smilesDescription)
-    smilesForm.appendChild(smilesBtn)
-    smilesFormDiv.appendChild(smilesHeader)
-    smilesFormDiv.appendChild(smilesForm)
-
-    return smilesFormDiv
 }
 
 function removeTaskConfigItem(level){
@@ -379,4 +398,6 @@ function generateResultsTable(data, constant){
     results.appendChild(table)
     return results
 }
+
+
 
