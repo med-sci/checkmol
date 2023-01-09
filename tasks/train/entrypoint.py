@@ -42,7 +42,7 @@ MODE = os.environ.get("MODE")
 METRIC = os.environ.get("METRIC")
 METRIC_MODE = os.environ.get("METRIC_MODE")
 TEST_SIZE = float(os.environ.get("TEST_SIZE"))
-SEARCH_SPACE_PATH = os.path.join(dirname(abspath(__file__)), "search_spaces/random_forest.json")
+SEARCH_SPACE_PATH = os.path.join(dirname(abspath(__file__)), "search_spaces/random_forest.yaml")
 TMP_MODEL_PATH = "/tmp/model/"
 
 METRIC_TO_OPTIMIZE = f'{METRIC}_cv_mean'

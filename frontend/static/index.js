@@ -1,4 +1,73 @@
-import interactionTask from './interactionTask.json' assert {type: 'json'}
+// add down arrow in circle to scroll
+
+let interactionTask  = [
+    {
+        "header": "Select Task",
+        "type": "Task",
+        "options": [
+            {
+                "option": "Interaction",
+                "optionClass": "interaction",
+                "imgpath": "./img/EGFR.png",
+                "descriptionSmall": "Small molecule - protein interaction"
+            }
+        ]
+    },
+    {
+        "header": "Choose target protein",
+        "type": "Protein",
+        "options": [
+            {
+                "option": "NR3C4",
+                "optionClass": "NR3C4",
+                "imgpath": "./img/NR3C4.png",
+                "descriptionSmall": "Androgen receptor\n"
+            },
+            {
+                "option": "EGFR",
+                "optionClass": "EGFR",
+                "imgpath": "./img/EGFR.png",
+                "descriptionSmall": "Epidermal growth factor receptor"
+            },
+            {
+                "option": "VEGFR2",
+                "optionClass": "VEGFR2",
+                "imgpath": "./img/VEGFR2.png",
+                "descriptionSmall": "Vascular endothelial growth factor receptor 2"
+            }
+        ]
+    },
+    {
+        "header": "Select interaction constant",
+        "type": "Constant",
+        "options": [
+            {
+                "option": "IC 50",
+                "optionClass": "IC-50",
+                "imgpath": "./img/EGFR.png",
+                "descriptionSmall": "Half maximal inhibitory concentration"
+            },
+            {
+                "option": "pIC 50",
+                "optionClass": "pIC-50",
+                "imgpath": "./img/EGFR.png",
+                "descriptionSmall": "Negative logarithm of IC 50"
+            }
+        ]
+    },
+    {
+        "header": "Set model mode",
+        "type": "Mode",
+        "options": [
+            {
+                "option": "Regression",
+                "optionClass": "regression",
+                "imgpath": "./img/EGFR.png",
+                "descriptionSmall": "R2 score mean on cross-validation: 0.6"
+            }
+        ]
+    }
+]
 
 const apiUrl = "http://api.lupuslucis.fvds.ru/"
 // ------interface------
@@ -11,6 +80,13 @@ const setUpTaskBtn = document.getElementById('setUpTaskBtn')
 const getResultsBtn = document.getElementById('getResultsBtn')
 const taskIdBtn = document.getElementById('taskIdBtn')
 const taskIdInput = document.getElementById('taskIdInput')
+const scrollDownBtn = document.getElementById("scrollDownBtn")
+
+let theme = 'light'
+
+scrollDownBtn.addEventListener('click', () => {
+    window.scrollTo(0, document.body.scrollHeight)
+})
 
 menuBtn.addEventListener('click', () => {
     sideMenu.style.display = 'block';
@@ -24,6 +100,14 @@ themeTogggler.addEventListener('click', () => {
     document.body.classList.toggle('dark-theme-variables')
     themeTogggler.querySelector('span:nth-child(1)').classList.toggle('active')
     themeTogggler.querySelector('span:nth-child(2)').classList.toggle('active')
+    if (theme === 'light'){
+        theme = 'dark'
+    } else if (theme === 'dark'){
+        theme = 'light'
+    }
+    if (document.querySelector('.smiles-form .form-submit')){
+        grecaptcha.reset({"theme": theme})
+    }
 } )
 // ------END interface------
 
@@ -33,6 +117,10 @@ getResultsBtn.addEventListener('click', () => {
     document.querySelector('main').style.display = 'none'
     document.querySelector('section.get-results').style.display = 'block'
     document.querySelector('.right .task-config').style.display = 'none'
+    let notification = document.querySelector('.notification')
+    if (notification) {
+        removeInfoBlock()
+    }
 })
 setUpTaskBtn.addEventListener('click', () => {
     document.querySelector('main').style.display = 'block'
@@ -86,7 +174,9 @@ function select(option) {
             let [widgetId, smilesForm] =  createSmilesForm(level+2)
             document.querySelector('main').appendChild(smilesForm)
         }
-        window.scrollTo(0, document.body.scrollHeight)
+        // let scrollposition = option.offsetTop -(0.3*option.offsetTop)
+        // console.log(scrollposition)
+        // window.scrollTo(0, scrollposition)
     }
 }
 
@@ -98,19 +188,23 @@ function checkSelection() {
             document.querySelector('.options .option.selected small').style.display = 'none'
             element.classList.remove("selected")
             if (element.style.width === '100%') {
-                element.style.width = '15rem'
+                element.style.width = '13rem'
             }
         }
     }
 }
 
-function createElementWithClass(tag, className=null, content=null) {
+function createElementWithClass(tag, className=null, content=null, html=false) {
     let element = document.createElement(tag)
     if (className !== null){
         element.setAttribute('class', className)
     }
     if (content !== null) {
-        element.textContent = content
+        if (html === true) {
+            element.innerHTML = content
+        } else {
+            element.textContent = content
+        }
     }
     return element
 }
@@ -191,7 +285,7 @@ function createSmilesForm(level) {
     smilesFormDiv.appendChild(smilesForm)
     let widgetId = grecaptcha.render(
         formSubmit,
-        {"sitekey": "6Ld2r8gjAAAAAP_QFG9k3v8YYMYkiOtOZz-7jtSq", "callback": sendRecaptcha}
+        {"sitekey": "6Ld2r8gjAAAAAP_QFG9k3v8YYMYkiOtOZz-7jtSq", "callback": sendRecaptcha, "theme": theme}
         )
     smilesFormDiv.appendChild(formSubmit)
 
@@ -200,13 +294,28 @@ function createSmilesForm(level) {
 
 async function sendRecaptcha(token) {
     const url = apiUrl + '/validate_captcha/' + token
-    let response = await fetch(
-        url, {
-            method: 'POST'
+    try {
+        let response = await fetch(
+            url, {
+                method: 'POST'
+            }
+        )
+        let responseJson = await response.json()
+        if (responseJson.success == true){
+            document.querySelector(".smiles-form .form-submit").style.display = 'none'
+            console.log(document.querySelector(".smiles-form .form-submit"))
+            let smilesBtn = document.querySelector(".smiles-form .smiles-btn")
+            if  (smilesBtn == null){
+                document.querySelector(".smiles-form").appendChild(createSmilesBtn())
+            } else {
+                smilesBtn.style.display = "flex"
+            }
+        }else{
+            grecaptcha.reset()
         }
-    )
-    let responseJson = await response.json()
-    console.log(responseJson)
+    } catch (error) {
+        grecaptcha.reset()
+    }
 }
 
 function createSmilesBtn() {
@@ -217,7 +326,11 @@ function createSmilesBtn() {
         let smiles = getAndParseSmiles()
 
         sendConfig(smiles, config)
+        document.querySelector(".smiles-btn").style.display = 'none'
+        document.querySelector(".smiles-form .form-submit").style.display = 'block'
+        grecaptcha.reset()
     })
+    return smilesBtn
 }
 
 function removeTaskConfigItem(level){
@@ -272,7 +385,7 @@ async function sendConfig(smiles, config){
             let responseJson = await response.json()
             console.log(responseJson)
             if (responseJson.status === 'Ok'){
-                var infoBlock = generateInfoBlock('success', 'Success!', `Your task id: ${id}`)
+                var infoBlock = generateInfoBlock('success', 'Success!', `Your task id: <span>${id}</span>`, id)
             } else if(responseJson.status === 'ValidationError') {
                 var infoBlock = generateInfoBlock('danger', 'Invalid SMILES', 'Please, provide a valid SMILES')
             } else {
@@ -284,7 +397,8 @@ async function sendConfig(smiles, config){
     } catch(e){
         var infoBlock = generateInfoBlock('danger', 'Oops..', 'Something is wrong. Try one more time')
     }
-    document.querySelector('body').appendChild(infoBlock)
+    var smilesForm = document.querySelector('.smiles-form')
+    smilesForm.insertBefore(infoBlock, document.querySelector('.smiles-form .form-submit'))
 }
 
 function toggleSideBar(){
@@ -316,32 +430,46 @@ window.onresize = () => {
     }
 }
 
-function generateInfoBlock(cls, header, message){
+function generateInfoBlock(cls, header, message, taskId=null){
     let infoBlock = createElementWithClass('div', 'notification')
     let infoBlockContent = createElementWithClass('div', 'content')
-    let infoCloseBtn = createElementWithClass('div', 'close')
+    let infoCloseBlock = createElementWithClass('div', 'close')
+    let infoCloseBtn = createElementWithClass('span', 'material-icons-sharp','close')
     infoCloseBtn.addEventListener('click', () => {
         removeInfoBlock()
     })
-    infoCloseBtn.appendChild(createElementWithClass('span', 'material-icons-sharp','close'))
+    infoCloseBlock.appendChild(infoCloseBtn)
+    if (cls === 'success') {
+        let infoCopyBtn = createElementWithClass('span', 'material-icons-sharp','copy')
+        infoCopyBtn.addEventListener('click', () => {
+            copyId(taskId)
+        })
+        infoCloseBlock.appendChild(infoCopyBtn)
+    }
     infoBlockContent.appendChild(createElementWithClass('h1', null, header))
-    infoBlockContent.appendChild(createElementWithClass('p', null, message))
+    infoBlockContent.appendChild(createElementWithClass('p', null, message, true))
     infoBlock.classList.add(cls)
     infoBlock.appendChild(infoBlockContent)
-    infoBlock.appendChild(infoCloseBtn)
+    infoBlock.appendChild(infoCloseBlock)
     return infoBlock
 }
 
 function removeInfoBlock(){
     let infoChild = document.querySelector('.notification')
     if (infoChild !== null) {
-        document.querySelector('body').removeChild(infoChild)
+        document.querySelector('.container .smiles-form').removeChild(infoChild)
     }
 }
 
 
 taskIdBtn.addEventListener('click', async function(event){
     event.preventDefault()
+    if (document.querySelector('.get-results .results-status')){
+        removeTaskStatus()
+    }
+    if (document.querySelector('.get-results .results')){
+        removeResults()
+    }
     const taskId = taskIdInput.value
     const targetUrl = apiUrl + 'runs/'+ taskId
     try {
@@ -397,6 +525,25 @@ function generateResultsTable(data, constant){
     table.appendChild(tableBody)
     results.appendChild(table)
     return results
+}
+
+function copyId(taskId){
+    if (window.isSecureContext && navigator.clipboard) {
+        navigator.clipboard.writeText(content);
+        alert("Copied the text: " + taskId)
+      } else {
+        alert(`Unable to copy ${taskId}`)
+      }
+}
+
+function removeTaskStatus (){
+    let getResultsSection = document.querySelector('.get-results')
+    getResultsSection.removeChild(document.querySelector('.get-results .results-status'))
+}
+
+function removeResults (){
+    let getResultsSection = document.querySelector('.get-results')
+    getResultsSection.removeChild(document.querySelector('.get-results .results'))
 }
 
 

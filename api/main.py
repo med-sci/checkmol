@@ -21,6 +21,7 @@ DB_PORT = int(os.environ.get("DB_PORT"))
 DB_USER = os.environ.get("DB_USER")
 DB_PASSWORD = os.environ.get("DB_PASSWORD")
 DB_NAME = os.environ.get("DB_NAME")
+RECAPTHA_SECRET_KEY = os.environ.get("RECAPTHA_SECRET_KEY")
 
 COLLECTION = "score"
 
@@ -64,9 +65,7 @@ async def index():
 
 @app.post("/validate_captcha/{token}")
 async def validate_captcha(token: str):
-    secretKey = '6Ld2r8gjAAAAAGbj4VpgQk-8UPxBtSUwvLUTiwCl'
-
-    url = f'https://www.google.com/recaptcha/api/siteverify?secret={secretKey}&response={token}'
+    url = f'https://www.google.com/recaptcha/api/siteverify?secret={RECAPTHA_SECRET_KEY}&response={token}'
     return requests.post(url).json()
 
 @app.post("/runs/{score_id}")

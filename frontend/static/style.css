@@ -62,6 +62,19 @@
 --box-shadow: 0 2rem 3rem var(--color-light);
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--color-info-dark);
+    -webkit-box-shadow: 0 0 0px 1000px var(--color-white) inset !important;
+}
+
 *{
     margin: 0;
     padding: 0;
@@ -71,6 +84,10 @@
     text-decoration: none ;
     list-style: none;
     box-sizing: border-box;
+}
+
+input {
+    color: var(--color-info-dark);
 }
 
 html {
@@ -131,6 +148,41 @@ textarea {
     resize: none;
 }
 
+.scroll-down {
+    animation: pulse 2s infinite;
+    cursor: pointer;
+    position: sticky;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    bottom: 3rem;
+    margin-right: 3rem;
+    left: 300rem;
+    height: 50px;
+    width: 50px;
+    background: var(--color-primary);
+    border-radius: 50%;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 rgb(115, 128, 236, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgb(115, 128, 236, 0);
+    }
+    100% {
+        transform: scale(0.9);
+    }
+}
+
+.scroll-down span{
+    font-size: 3rem;
+    color: var(--color-white);
+}
+
 .btn {
     display: inline-block;
     padding: var(--bs-btn-padding-y) var(--bs-btn-padding-x);
@@ -166,8 +218,9 @@ button:focus:not(:focus-visible) {
     width: 96%;
     margin: 0 auto;
     gap: 1.8rem;
-    grid-template-columns: 14rem auto 28rem;
+    grid-template-columns: 14rem auto 24rem;
     align-items: start;
+    position: relative;
 }
 
 .text-muted {
@@ -297,7 +350,7 @@ aside .sidebar div:hover span {
 /* ==== Main ===== */
 main {
     margin-top: 1.4rem;
-    margin-bottom: 3rem;
+    /* margin-bottom: 3rem; */
 }
 
 main .header-content {
@@ -339,10 +392,10 @@ main .header-content .content ul li .content span {
 
 main .options {
     display: flex;
-    /* flex-wrap: wrap; */
-    align-items: flex-start;
-    justify-content: start;
+    align-items: center;
+    justify-content: flex-start;
     margin-top: 1.1rem;
+    flex-wrap: wrap;
     gap: 1.2rem;
 }
 
@@ -384,7 +437,7 @@ main .options .option {
     justify-content: space-between;
     align-items: start;
     cursor: pointer;
-    padding: 1.5rem;
+    padding: 1rem;
 }
 
 main .options .option:hover {
@@ -448,6 +501,7 @@ main .smiles-form .smiles-ta {
     padding: 1rem;
     border: 2px solid transparent;
     border-radius: var(--border-radius-1);
+    height: 20rem;
 }
 
 main .smiles-form form:focus-within{
@@ -465,6 +519,11 @@ main .smiles-form .smiles-btn {
     box-shadow: var(--box-shadow);
     background: var(--color-primary);
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 13rem;
+    height: 3.5rem;
 }
 
 main .smiles-form form .smiles-btn:hover{
@@ -479,19 +538,19 @@ main .smiles-form .form-submit{
     display: flex;
     justify-content: space-between;
     flex-direction: row;
-    position: sticky;
     padding: 0;
-    margin-left: 1rem;
-    margin-right: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
     border-radius: var(--border-radius-1);
-    bottom: 1rem;
-    right: 0;
-    width: 30rem;
+    width: auto;
     height: 5rem;
     opacity: 0.7;
 }
 
 .notification .close {
+    display: flex;
+    gap: 0.8rem;
+    flex-direction: column;
     padding: 5px;
     color: white;
     cursor: pointer;
@@ -537,6 +596,7 @@ main .smiles-form .form-submit{
 
 section.get-results {
     margin-top: calc(var(--header-margin) + 1.4rem + 4rem);
+    margin-bottom: 3rem;
 }
 
 section.get-results h2{
