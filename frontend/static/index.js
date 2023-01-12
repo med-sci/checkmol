@@ -51,7 +51,7 @@ let interactionTask  = [
                 "option": "pIC 50",
                 "optionClass": "pIC-50",
                 "imgpath": "./img/EGFR.png",
-                "descriptionSmall": "Negative logarithm of IC 50"
+                "descriptionSmall": "Logarithm of IC 50"
             }
         ]
     },
@@ -484,6 +484,9 @@ taskIdBtn.addEventListener('click', async function(event){
     if (taskStatus === 'Succeeded'){
         var tstatus = 'Completed'
         var divClass = 'success'
+    } else if (taskStatus === 'Pending'){
+        var tstatus = 'Pending'
+        var divClass = 'warning'
     } else {
         var tstatus = 'Failed'
         var divClass = 'danger'

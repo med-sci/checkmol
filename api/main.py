@@ -83,7 +83,8 @@ async def score(score_case: ScoreCase, score_id: str):
                 "Constant": score_case.Constant,
                 "Protein": score_case.Protein,
                 "Task": score_case.Task,
-                "scalerPath": scaler_path
+                "scalerPath": scaler_path,
+                "status": "Pending"
             }
         )
         response = requests.post(

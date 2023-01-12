@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: pharmsci/checkmol-frontend:v0.1.2
+          image: pharmsci/checkmol-frontend:v0.1.3
           envFrom:
           - configMapRef:
               name: frontend-config

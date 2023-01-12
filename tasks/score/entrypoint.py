@@ -1,5 +1,6 @@
 import os
 import tempfile
+import numpy as np
 from loguru import logger
 from mlbase.utils import ClientS3, read_array
 from mlbase.db import DBInterface
@@ -32,6 +33,7 @@ db = DBInterface(
 
 MODEL_PATH = db.get_record(COLLECTION, SCORE_ID)["modelPath"]
 FEATURES_PATH = db.get_record(COLLECTION, SCORE_ID)["featuresPath"]
+CONSTANT = db.get_record(COLLECTION, SCORE_ID)["Constant"]
 
 s3_client = ClientS3(
     endpoint_url=S3_ENDPOINT_URL,
@@ -64,6 +66,10 @@ with tempfile.TemporaryDirectory() as tmpdir:
     logger.info(f"Scoring on {tmp_model_path}")
     predictions = model.predict(features)
 
+    if CONSTANT == "IC 50":
+        predictions = np.power(predictions, 10)
+
+    predictions = np.round(predictions, 3)
     smiles = db.get_record(COLLECTION, SCORE_ID)["smiles"]
     results = {smiles: value for smiles, value in zip(smiles, predictions)}
     db.update_record(COLLECTION, SCORE_ID, {"results": results})
