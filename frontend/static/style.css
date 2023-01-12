@@ -595,6 +595,10 @@ main .smiles-form .form-submit{
     background: red;
 }
 
+.results-status.warning {
+    background: orange;
+}
+
 section.get-results {
     margin-top: calc(var(--header-margin) + 1.4rem + 4rem);
     margin-bottom: 3rem;
