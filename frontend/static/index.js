@@ -105,9 +105,6 @@ themeTogggler.addEventListener('click', () => {
     } else if (theme === 'dark'){
         theme = 'light'
     }
-    if (document.querySelector('.smiles-form .form-submit')){
-        grecaptcha.reset({"theme": theme})
-    }
 } )
 // ------END interface------
 
@@ -311,9 +308,11 @@ async function sendRecaptcha(token) {
                 smilesBtn.style.display = "flex"
             }
         }else{
+            console.log(response)
             grecaptcha.reset()
         }
     } catch (error) {
+        console.log(error)
         grecaptcha.reset()
     }
 }
